@@ -9,6 +9,7 @@ import EmployeeProfileSection from './EmployeeProfileSection';
 import RequestTypeSectionGA from './RequestTypeSectionGA';
 import NoteModal from './NoteModal';
 import { ReadOnlyField, CommentTextArea, ActionButton } from './ReusableComponents';
+import { useUpdateGymRequestByGA } from '../hooks';
 
 // GA-specific components for Group Exercise
 const GAApprovalFormGroupExercise = () => {
@@ -28,14 +29,54 @@ const GAApprovalFormGroupExercise = () => {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [selectedTimeSlot] = useState('8.00 AM to 9.00 AM'); // Employee's selected time slot
 
-  const handleApprove = () => {
-    console.log('Group Exercise request approved with comment:', comment);
-    // Add approval logic here
+  // GA Update API hook
+  const { data: updateData, loading: updateLoading, error: updateError, updateRequest, clear } = useUpdateGymRequestByGA();
+
+  // Example: GA would receive masterid and mempid from the workflow system
+  const mempid = 25504878; // Employee ID
+
+  const handleApprove = async () => {
+    // Prepare request data for approval
+    const requestData = {
+      mEmpID: mempid, // Employee ID from registration
+      gymID: 2, // Gym ID (2 for Group Exercise)
+      regType: 1, // Registration Type (1 for approval)
+      paymentOption: 1, // Payment Option
+      gymType: 2, // Gym Type (2 for Group Exercise)
+      selectedGymTID: 1, // Selected Gym Timing ID (should come from registration data)
+      subscriptionStartDate: new Date().toISOString(), // Start Date (should come from registration data)
+      subscriptionEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // End Date
+      resType: 1, // Response Type (1 for approval)
+      fcFileIndexID: 1 // File Index ID (should come from registration data)
+    };
+
+    console.log('Group Exercise request approved with data:', requestData);
+    console.log('Comment:', comment);
+    
+    // Call the API
+    await updateRequest(requestData);
   };
 
-  const handleReject = () => {
-    console.log('Group Exercise request rejected with comment:', comment);
-    // Add rejection logic here
+  const handleReject = async () => {
+    // Prepare request data for rejection
+    const requestData = {
+      mEmpID: mempid, // Employee ID from registration
+      gymID: 2, // Gym ID (2 for Group Exercise)
+      regType: 2, // Registration Type (2 for rejection)
+      paymentOption: 1, // Payment Option
+      gymType: 2, // Gym Type (2 for Group Exercise)
+      selectedGymTID: 1, // Selected Gym Timing ID (should come from registration data)
+      subscriptionStartDate: new Date().toISOString(), // Start Date (should come from registration data)
+      subscriptionEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // End Date
+      resType: 2, // Response Type (2 for rejection)
+      fcFileIndexID: 1 // File Index ID (should come from registration data)
+    };
+
+    console.log('Group Exercise request rejected with data:', requestData);
+    console.log('Comment:', comment);
+    
+    // Call the API
+    await updateRequest(requestData);
   };
 
   const handleNoteClick = () => {
@@ -220,19 +261,72 @@ const GAApprovalFormGroupExercise = () => {
           />
         </div>
 
+        {/* GA Update API Status Messages */}
+        {updateLoading && (
+          <div style={{ 
+            padding: '12px', 
+            backgroundColor: '#e3f2fd', 
+            color: '#1976d2', 
+            borderRadius: '4px', 
+            marginBottom: '16px',
+            fontSize: '14px',
+            textAlign: 'center'
+          }}>
+            Processing your decision...
+          </div>
+        )}
+        
+        {updateError && (
+          <div style={{ 
+            padding: '12px', 
+            backgroundColor: '#ffebee', 
+            color: '#c62828', 
+            borderRadius: '4px', 
+            marginBottom: '16px',
+            fontSize: '14px',
+            textAlign: 'center'
+          }}>
+            Error: {updateError}
+          </div>
+        )}
+        
+        {updateData && (
+          <div style={{ 
+            padding: '12px', 
+            backgroundColor: '#e8f5e8', 
+            color: '#2e7d32', 
+            borderRadius: '4px', 
+            marginBottom: '16px',
+            fontSize: '14px',
+            textAlign: 'center'
+          }}>
+            ✅ Decision processed successfully!
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 16 }}>
+          {updateData && (
+            <ActionButton 
+              variant="secondary"
+              onClick={clear}
+            >
+              Process Another
+            </ActionButton>
+          )}
           <ActionButton 
             variant="secondary"
             onClick={handleReject}
+            disabled={updateLoading}
           >
-            Reject
+            {updateLoading ? 'Processing...' : 'Reject'}
           </ActionButton>
           <ActionButton 
             variant="primary"
             onClick={handleApprove}
+            disabled={updateLoading}
           >
-            Approve
+            {updateLoading ? 'Processing...' : 'Approve'}
           </ActionButton>
         </div>
       </div>

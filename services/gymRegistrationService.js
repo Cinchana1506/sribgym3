@@ -127,6 +127,7 @@ export const getEmployeeRegistrationDetails = async ({ mempid }) => {
   }
 };
 
+
 /**
  * Get payment status
  * @param {Object} params - Query parameters

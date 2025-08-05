@@ -13,6 +13,9 @@ import ReportFormGroupExercise from './components/ReportFormGroupExercise';
 import ReportDeregistrationFormGym from './components/ReportDeregistrationFormGym';
 import ReportDeregistrationFormGroupExercise from './components/ReportDeregistrationFormGroupExercise';
 import ViewPolicies from './components/ViewPolicies';
+import BatchTimingsExample from './components/BatchTimingsExample';
+import GymWorkflowStatusExample from './components/GymWorkflowStatusExample';
+
 
 // View Policies icon
 const viewPoliciesIcon = (
@@ -42,6 +45,9 @@ function App() {
             <Route path="/report-group-exercise" element={<ReportFormGroupExercise />} />
             <Route path="/report-deregistration-gym" element={<ReportDeregistrationFormGym />} />
             <Route path="/report-deregistration-group-exercise" element={<ReportDeregistrationFormGroupExercise />} />
+            <Route path="/batch-timings" element={<BatchTimingsExample />} />
+            <Route path="/gym-workflow-status" element={<GymWorkflowStatusExample />} />
+
             <Route path="/" element={<Navigate to="/employee" replace />} />
           </Routes>
           <ViewPolicies />

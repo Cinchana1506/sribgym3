@@ -3,6 +3,7 @@ export { default as useBatchTimings } from './useBatchTimings';
 export { default as useGymWorkflowStatus } from './useGymWorkflowStatus';
 export { default as useDetailsByMasterID } from './useDetailsByMasterID';
 export { default as useEmployeeRegistrationDetails } from './useEmployeeRegistrationDetails';
+
 export { default as usePaymentStatus } from './usePaymentStatus';
 export { default as useSubmitGymRequest } from './useSubmitGymRequest';
 export { default as useUpdateGymRequestByGA } from './useUpdateGymRequestByGA';

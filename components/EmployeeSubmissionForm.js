@@ -13,40 +13,47 @@ import FormActionsSection from './FormActionsSection';
 import PaymentDetails from './PaymentDetails';
 import NoteModal from './NoteModal';
 import { Modal, FormContainer } from './ReusableComponents';
-import { useEmployeeRegistrationDetails } from '../hooks';
+import { useGymWorkflowStatus, useEmployeeRegistrationDetails, useUpdateGymRequestByEmployee } from '../hooks';
 
 const EmployeeSubmissionForm = () => {
   const [activity, setActivity] = useState('Gym');
   const [modal, setModal] = useState({ open: false, type: '' });
-  const [employee, setEmployee] = useState(null);
   const [attachedFile, setAttachedFile] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [formData, setFormData] = useState({});
 
-  // Use the real API hook
+  // Employee ID - in real app this would come from authentication
+  const employeeId = 25504878;
+
+  // Fetch employee profile data using the API
   const { data: employeeData, loading: employeeLoading, error: employeeError } = useEmployeeRegistrationDetails({
+    mempid: employeeId,
+    autoFetch: true
+  });
+
+  // Fallback employee data if API fails
+  const fallbackEmployee = {
+    id: '25504878',
+    name: 'Manoj Kandan M',
+    email: 'Manoj.kandan@partner.samsung.com',
+    designation: 'Outsourcing',
+    division: 'Tech Strategy Team\\Smart Infra Group\\Information System & AI Tools',
+    manager: 'Ravindra S R (06876669)',
+    avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg'
+  };
+
+  // Use API data if available, otherwise fallback
+  const employee = employeeData?.success && employeeData?.data ? employeeData.data : fallbackEmployee;
+
+  // Check workflow status for this employee using the provided API
+  const { data: workflowData, loading: workflowLoading, error: workflowError } = useGymWorkflowStatus({
     mempid: 25504878, // Replace with actual employee ID
     autoFetch: true
   });
 
-  useEffect(() => {
-    if (employeeData?.success && employeeData?.data) {
-      setEmployee(employeeData.data);
-    } else if (employeeError || !employeeData?.success) {
-      // Fallback to mock data if API fails
-      console.log('Using mock data due to API error:', employeeError);
-      setEmployee({
-        id: '25504878',
-        name: 'Manoj Kandan M',
-        email: 'Manoj.kandan@partner.samsung.com',
-        designation: 'Outsourcing',
-        division: 'Tech Strategy Team\\Smart Infra Group\\Information System & AI Tools',
-        manager: 'Ravindra S R (06876669)',
-        avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg'
-      });
-    }
-  }, [employeeData, employeeError]);
+  // Employee Update API hook
+  const { data: updateData, loading: updateLoading, error: updateError, updateRequest, clear } = useUpdateGymRequestByEmployee();
 
   const handleApprove = () => {
     setModal({ open: true, type: 'approval' });
@@ -64,6 +71,27 @@ const EmployeeSubmissionForm = () => {
 
   const handleNoteClick = () => {
     setShowNoteModal(true);
+  };
+
+  const handleUpdateRequest = async () => {
+    // Prepare request data for updating existing registration
+    const requestData = {
+      mEmpID: employeeId, // Employee ID
+      gymID: 1, // Gym ID (should come from form data)
+      regType: 1, // Registration Type (1 for update)
+      paymentOption: 1, // Payment Option (should come from form data)
+      gymType: 1, // Gym Type (should come from form data)
+      selectedGymTID: 1, // Selected Gym Timing ID (should come from form data)
+      subscriptionStartDate: new Date().toISOString(), // Start Date (should come from form data)
+      subscriptionEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // End Date (should come from form data)
+      resType: 1, // Response Type (1 for update)
+      fcFileIndexID: 1 // File Index ID (should come from form data)
+    };
+
+    console.log('Updating registration with data:', requestData);
+    
+    // Call the API
+    await updateRequest(requestData);
   };
 
   return (
@@ -99,6 +127,36 @@ const EmployeeSubmissionForm = () => {
         <EmployeeProfileSection employee={employee} />
       )}
 
+      {/* Workflow Status Section */}
+      {workflowLoading ? (
+        <div style={{ padding: '10px', textAlign: 'center', color: '#1976d2', fontSize: '14px' }}>
+          Checking workflow status...
+        </div>
+      ) : workflowError ? (
+        <div style={{ padding: '10px', textAlign: 'center', color: '#f44336', fontSize: '14px' }}>
+          Error checking workflow status: {workflowError}
+        </div>
+      ) : workflowData && workflowData.data && workflowData.data.length > 0 ? (
+        <div style={{ 
+          padding: '15px', 
+          margin: '10px 0', 
+          backgroundColor: '#fff3cd', 
+          border: '1px solid #ffeaa7', 
+          borderRadius: '4px',
+          fontSize: '14px'
+        }}>
+          <div style={{ fontWeight: 'bold', marginBottom: '5px', color: '#856404' }}>
+            ⚠️ Workflow Status
+          </div>
+          {workflowData.data.map((workflow, index) => (
+            <div key={index} style={{ color: '#856404' }}>
+              <div>Pending Workflow ID: {workflow.pendingWFID}</div>
+              <div>Status: {workflow.status === 0 ? 'Pending' : 'Active'}</div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
       {/* Required Information and Request Type Section */}
       <RequestTypeSection onPaymentClick={handlePaymentClick} onNoteClick={handleNoteClick} currentActivity={activity} />
 
@@ -114,8 +172,12 @@ const EmployeeSubmissionForm = () => {
           <Declarations state="state1" />
         </div>
 
-        {/* Comment Box and Submit Button */}
-        <FormActionsSection formData={formData} />
+        {/* Comment Box and Submit/Update Button */}
+        <FormActionsSection 
+          formData={formData} 
+          isUpdateMode={workflowData && workflowData.data && workflowData.data.length > 0} // If workflow exists, enable update mode
+          onUpdate={handleUpdateRequest}
+        />
       </FormContainer>
 
       {/* Modal overlays */}

@@ -7,6 +7,7 @@ import BreadcrumbHeader from './BreadcrumbHeader';
 import EmployeeProfileSection from './EmployeeProfileSection';
 import RequestTypeSectionReport from './RequestTypeSectionReport';
 import { ReadOnlyField } from './ReusableComponents';
+import { useGymRegistrationDetails } from '../hooks';
 
 // Report-specific components for Gym
 const ReportFormGym = () => {
@@ -22,6 +23,14 @@ const ReportFormGym = () => {
 
   // This would come from the employee's submitted form - for now hardcoded as 'Registration'
   const [requestType, setRequestType] = useState('Registration'); // or 'De-Registration'
+
+  // Fetch gym registration details for reporting
+  const { data: registrationDetails, loading: detailsLoading, error: detailsError, fetchGymRegistrationDetails } = useGymRegistrationDetails({
+    searchtype: 1, // Search type (1 for gym)
+    isemphistory: 0, // Not employee history
+    empname: '', // Empty for all employees
+    autoFetch: false // Don't auto-fetch, let user trigger
+  });
 
   return (
     <div style={{
@@ -61,6 +70,137 @@ const ReportFormGym = () => {
       }}>
         {/* Request Type Section Only */}
         <RequestTypeSectionReport requestType={requestType} />
+
+        {/* Search and Filter Section */}
+        <div style={{ marginBottom: 32 }}>
+          <div style={{ fontWeight: 700, fontSize: 16, color: '#202224', marginBottom: 16, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>
+            Search Gym Registration Details
+          </div>
+          
+          <div style={{ display: 'flex', gap: 16, alignItems: 'flex-end', marginBottom: 16 }}>
+            <div style={{ flex: 1 }}>
+              <label style={{ display: 'block', marginBottom: 8, fontSize: 14, color: '#202224', fontWeight: 500 }}>
+                Employee Name
+              </label>
+              <input
+                type="text"
+                placeholder="Enter employee name to search"
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  border: '1.5px solid #e3e8ee',
+                  borderRadius: 8,
+                  fontSize: 14,
+                  fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif"
+                }}
+                onChange={(e) => {
+                  // Update search parameters
+                }}
+              />
+            </div>
+            <button
+              onClick={() => fetchGymRegistrationDetails()}
+              disabled={detailsLoading}
+              style={{
+                padding: '12px 24px',
+                background: '#1976d2',
+                color: 'white',
+                border: 'none',
+                borderRadius: 8,
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: detailsLoading ? 'not-allowed' : 'pointer',
+                fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif",
+                opacity: detailsLoading ? 0.6 : 1
+              }}
+            >
+              {detailsLoading ? 'Searching...' : 'Search'}
+            </button>
+          </div>
+
+          {/* API Status Messages */}
+          {detailsLoading && (
+            <div style={{ 
+              padding: '12px', 
+              backgroundColor: '#e3f2fd', 
+              color: '#1976d2', 
+              borderRadius: '4px', 
+              marginBottom: '16px',
+              fontSize: '14px',
+              textAlign: 'center'
+            }}>
+              Searching for gym registration details...
+            </div>
+          )}
+          
+          {detailsError && (
+            <div style={{ 
+              padding: '12px', 
+              backgroundColor: '#ffebee', 
+              color: '#c62828', 
+              borderRadius: '4px', 
+              marginBottom: '16px',
+              fontSize: '14px',
+              textAlign: 'center'
+            }}>
+              Error: {detailsError}
+            </div>
+          )}
+          
+          {registrationDetails && registrationDetails.success && (
+            <div style={{ 
+              padding: '12px', 
+              backgroundColor: '#e8f5e8', 
+              color: '#2e7d32', 
+              borderRadius: '4px', 
+              marginBottom: '16px',
+              fontSize: '14px',
+              textAlign: 'center'
+            }}>
+              ✅ Found {registrationDetails.data?.length || 0} registration records
+            </div>
+          )}
+        </div>
+
+        {/* Results Display */}
+        {registrationDetails && registrationDetails.success && registrationDetails.data && (
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ fontWeight: 700, fontSize: 16, color: '#202224', marginBottom: 16, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>
+              Registration Details
+            </div>
+            <div style={{ 
+              background: '#fff', 
+              border: '1px solid #e3e8ee', 
+              borderRadius: 8,
+              overflow: 'hidden'
+            }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: '#f8f9fa' }}>
+                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>Employee ID</th>
+                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>Name</th>
+                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>Gym Type</th>
+                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>Status</th>
+                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>Start Date</th>
+                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>End Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {registrationDetails.data.map((record, index) => (
+                    <tr key={index} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                      <td style={{ padding: '12px', fontSize: 14 }}>{record.employeeID || 'N/A'}</td>
+                      <td style={{ padding: '12px', fontSize: 14 }}>{record.employeeName || 'N/A'}</td>
+                      <td style={{ padding: '12px', fontSize: 14 }}>{record.gymType || 'N/A'}</td>
+                      <td style={{ padding: '12px', fontSize: 14 }}>{record.status || 'N/A'}</td>
+                      <td style={{ padding: '12px', fontSize: 14 }}>{record.startDate || 'N/A'}</td>
+                      <td style={{ padding: '12px', fontSize: 14 }}>{record.endDate || 'N/A'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Gym Details Section (read-only) */}
         <div style={{ marginBottom: 32 }}>

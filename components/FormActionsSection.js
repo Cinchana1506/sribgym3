@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { CommentTextArea, ActionButton } from './ReusableComponents';
-import { useSubmitGymRequest } from '../hooks';
+import { useSubmitGymRequest, useUpdateGymRequestByEmployee } from '../hooks';
 
-const FormActionsSection = ({ formData }) => {
+const FormActionsSection = ({ formData, isUpdateMode = false, onUpdate }) => {
   const [comment, setComment] = useState('');
   const { data, loading, error, submitRequest, clear } = useSubmitGymRequest();
+  const { data: updateData, loading: updateLoading, error: updateError, updateRequest, clear: clearUpdate } = useUpdateGymRequestByEmployee();
 
   const handleSubmit = async () => {
     // For now, let's use sample data to test the API
@@ -40,50 +41,51 @@ const FormActionsSection = ({ formData }) => {
       />
 
       {/* Loading and Error Messages */}
-      {loading && (
+      {(loading || updateLoading) && (
         <div style={{ color: '#1976d2', marginBottom: 16 }}>
-          Submitting your request...
+          {isUpdateMode ? 'Updating your request...' : 'Submitting your request...'}
         </div>
       )}
       
-      {error && (
+      {(error || updateError) && (
         <div style={{ color: '#f44336', marginBottom: 16 }}>
-          Error: {error}
+          Error: {error || updateError}
         </div>
       )}
       
-      {data && (
+      {(data || updateData) && (
         <div style={{ color: '#4caf50', marginBottom: 16 }}>
-          Success! Your request has been submitted.
+          Success! Your request has been {isUpdateMode ? 'updated' : 'submitted'}.
         </div>
       )}
 
-      {/* Submit Button */}
+      {/* Action Buttons */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 16 }}>
-        {data && (
+        {(data || updateData) && (
           <ActionButton 
             variant="secondary"
-            onClick={clear}
+            onClick={isUpdateMode ? clearUpdate : clear}
           >
-            Submit Another
+            {isUpdateMode ? 'Update Another' : 'Submit Another'}
           </ActionButton>
         )}
         <ActionButton 
           variant="primary"
-          onClick={handleSubmit}
-          disabled={loading}
+          onClick={isUpdateMode ? onUpdate : handleSubmit}
+          disabled={loading || updateLoading}
         >
-          {loading ? 'Submitting...' : 'Submit'}
+          {loading || updateLoading ? (isUpdateMode ? 'Updating...' : 'Submitting...') : (isUpdateMode ? 'Update' : 'Submit')}
         </ActionButton>
       </div>
 
       {/* Debug Info */}
       <div style={{ marginTop: '20px', padding: '10px', background: '#f5f5f5', borderRadius: '4px', fontSize: '12px' }}>
         <strong>Debug Info:</strong>
-        <div>Loading: {loading ? 'Yes' : 'No'}</div>
-        <div>Error: {error ? 'Yes' : 'No'}</div>
-        <div>Data: {data ? 'Received' : 'None'}</div>
-        {error && <div style={{ color: 'red' }}>Error details: {error}</div>}
+        <div>Mode: {isUpdateMode ? 'Update' : 'Submit'}</div>
+        <div>Loading: {(loading || updateLoading) ? 'Yes' : 'No'}</div>
+        <div>Error: {(error || updateError) ? 'Yes' : 'No'}</div>
+        <div>Data: {(data || updateData) ? 'Received' : 'None'}</div>
+        {(error || updateError) && <div style={{ color: 'red' }}>Error details: {error || updateError}</div>}
       </div>
     </>
   );
