@@ -14,6 +14,7 @@ const EmployeeDeregistrationFormGym = () => {
   const [attachedFile, setAttachedFile] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showNoteModal, setShowNoteModal] = useState(false);
+  const [formData, setFormData] = useState({});
 
   // Employee ID - in real app this would come from authentication
   const employeeId = 25504878;
