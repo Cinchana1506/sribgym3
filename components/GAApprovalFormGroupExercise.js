@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import useBatchTimings from '../hooks/useBatchTimings';
 import { BsDownload } from 'react-icons/bs';
 import { BiRefresh } from 'react-icons/bi';
 import { BsChevronRight } from 'react-icons/bs';
@@ -27,7 +28,25 @@ const GAApprovalFormGroupExercise = () => {
   // This would come from the employee's submitted form - for now hardcoded as 'Registration'
   const [requestType, setRequestType] = useState('Registration'); // or 'De-Registration'
   const [showNoteModal, setShowNoteModal] = useState(false);
-  const [selectedTimeSlot] = useState('8.00 AM to 9.00 AM'); // Employee's selected time slot
+  // Fetch batch timings for group exercise (gymtype=1, gymid=2, mempid=313)
+  const { data: batchTimings, loading: timingsLoading, error: timingsError } = useBatchTimings({
+    gymtype: 1,
+    gymid: 2,
+    mempid: 313,
+    autoFetch: true
+  });
+  
+  // Get the first available time slot or use default
+  const getSelectedTimeSlot = () => {
+    if (batchTimings && batchTimings.length > 0) {
+      // Assuming the API returns an array of time slots with a format like { timeSlot: "8.00 AM to 9.00 AM" }
+      // Adjust this based on the actual API response structure
+      return batchTimings[0].timeSlot || batchTimings[0].timings || batchTimings[0].slot || '8.00 AM to 9.00 AM';
+    }
+    return '8.00 AM to 9.00 AM'; // fallback
+  };
+  
+  const selectedTimeSlot = getSelectedTimeSlot();
 
   // GA Update API hook
   const { data: updateData, loading: updateLoading, error: updateError, updateRequest, clear } = useUpdateGymRequestByGA();

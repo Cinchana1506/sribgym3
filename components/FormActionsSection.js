@@ -74,7 +74,7 @@ const FormActionsSection = ({ formData, isUpdateMode = false, onUpdate }) => {
           onClick={isUpdateMode ? onUpdate : handleSubmit}
           disabled={loading || updateLoading}
         >
-          {loading || updateLoading ? (isUpdateMode ? 'Updating...' : 'Submitting...') : (isUpdateMode ? 'Update' : 'Submit')}
+          {loading || updateLoading ? 'Submitting...' : 'Submit'}
         </ActionButton>
       </div>
 

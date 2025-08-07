@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BsDownload } from 'react-icons/bs';
 import { BiRefresh } from 'react-icons/bi';
 import { BsChevronRight } from 'react-icons/bs';
@@ -7,6 +7,10 @@ import BreadcrumbHeader from './BreadcrumbHeader';
 import EmployeeProfileSection from './EmployeeProfileSection';
 import RequestTypeSectionReport from './RequestTypeSectionReport';
 import { ReadOnlyField } from './ReusableComponents';
+import useBatchTimings from '../hooks/useBatchTimings';
+import useGymWorkflowStatus from '../hooks/useGymWorkflowStatus';
+import useDetailsByMasterID from '../hooks/useDetailsByMasterID';
+import usePaymentStatus from '../hooks/usePaymentStatus';
 
 // Report-specific components for Group Exercise
 const ReportFormGroupExercise = () => {
@@ -20,9 +24,122 @@ const ReportFormGroupExercise = () => {
     avatarUrl: '/samsungimage.png'
   });
 
-  // This would come from the employee's submitted form - for now hardcoded as 'Registration'
+  // State for request type - will be determined based on registration status
   const [requestType, setRequestType] = useState('Registration'); // or 'De-Registration'
-  const [selectedTimeSlot] = useState('8.00 AM to 9.00 AM'); // Employee's selected time slot
+  const [hasExistingRegistration, setHasExistingRegistration] = useState(false);
+  const [masterID, setMasterID] = useState(null);
+  const [showPayment, setShowPayment] = useState(false);
+  const [paymentChecked, setPaymentChecked] = useState(false);
+
+  // Get employee ID (default to 313 if not available from login)
+  const employeeId = employee.id || '313';
+
+  // Fetch batch timings for group exercise (gymtype=1, gymid=2, mempid=313)
+  const { data: batchTimings, loading: timingsLoading, error: timingsError } = useBatchTimings({
+    gymtype: 1,
+    gymid: 2,
+    mempid: parseInt(employeeId),
+    autoFetch: true
+  });
+
+  // Fetch workflow status for the employee
+  const { data: workflowStatus, loading: workflowLoading, error: workflowError } = useGymWorkflowStatus({
+    mempid: parseInt(employeeId),
+    autoFetch: true
+  });
+
+  // Fetch details by master ID if we have a master ID
+  const { data: registrationDetails, loading: detailsLoading, error: detailsError, fetchDetailsByMasterID } = useDetailsByMasterID({
+    masterid: masterID,
+    mempid: parseInt(employeeId),
+    autoFetch: false // We'll fetch manually when we have master ID
+  });
+
+  // Effect to determine registration status and set appropriate form mode
+  useEffect(() => {
+    if (workflowStatus && workflowStatus.masterID) {
+      setMasterID(workflowStatus.masterID);
+      // If employee has a master ID, they have registered
+      setHasExistingRegistration(true);
+      // Default to deregistration if they have existing registration
+      setRequestType('De-Registration');
+    } else if (registrationDetails) {
+      // Check if registration details indicate existing registration
+      const isRegistered = registrationDetails.gymwfs !== undefined && registrationDetails.gymwfs !== null;
+      setHasExistingRegistration(isRegistered);
+      if (isRegistered) {
+        setRequestType('De-Registration');
+      }
+    }
+  }, [workflowStatus, registrationDetails]);
+
+  // Fetch registration details when master ID is available
+  useEffect(() => {
+    if (masterID && parseInt(employeeId)) {
+      fetchDetailsByMasterID({ masterid: masterID, mempid: parseInt(employeeId) });
+    }
+  }, [masterID, employeeId, fetchDetailsByMasterID]);
+
+  // Function to toggle between registration and deregistration
+  const toggleRequestType = () => {
+    setRequestType(prev => prev === 'Registration' ? 'De-Registration' : 'Registration');
+  };
+
+  // Function to get approval status from gymwfs field
+  const getApprovalStatus = () => {
+    if (registrationDetails && registrationDetails.gymwfs !== undefined) {
+      return registrationDetails.gymwfs === 0 ? 'Pending' : 'Approved';
+    }
+    return 'Unknown';
+  };
+
+  // Payment status hook - fetch when payment button is clicked
+  const { data: paymentStatus, loading: paymentLoading, error: paymentError, fetchPaymentStatus } = usePaymentStatus({
+    mempid: parseInt(employeeId),
+    year: '2025',
+    startmonth: '8', // Current month
+    endmonth: '8',   // Current month
+    autoFetch: false // Only fetch when payment button is clicked
+  });
+
+  // Function to handle payment button click
+  const handlePaymentClick = () => {
+    setShowPayment(true);
+    setPaymentChecked(true);
+    // Fetch payment status
+    fetchPaymentStatus({
+      mempid: parseInt(employeeId),
+      year: '2025',
+      startmonth: '8',
+      endmonth: '8'
+    });
+  };
+
+  // Function to check if payment is already made
+  const isPaymentMade = () => {
+    if (paymentStatus && paymentStatus.data && paymentStatus.data.length > 0) {
+      // Check if payment status indicates payment is made
+      return paymentStatus.data.some(payment => payment.paymentStatus === 'Paid' || payment.status === true);
+    }
+    return false;
+  };
+
+  // Function to check if submit button should be disabled
+  const isSubmitDisabled = () => {
+    return paymentChecked && isPaymentMade();
+  };
+
+  // Get the first available time slot or use default
+  const getSelectedTimeSlot = () => {
+    if (batchTimings && batchTimings.length > 0) {
+      // Assuming the API returns an array of time slots with a format like { timeSlot: "8.00 AM to 9.00 AM" }
+      // Adjust this based on the actual API response structure
+      return batchTimings[0].timeSlot || batchTimings[0].timings || batchTimings[0].slot || '8.00 AM to 9.00 AM';
+    }
+    return '8.00 AM to 9.00 AM'; // fallback
+  };
+
+  const selectedTimeSlot = getSelectedTimeSlot();
 
   // Group Exercise specific data
   const activitySchedule = [
@@ -49,6 +166,62 @@ const ReportFormGroupExercise = () => {
     }}>
       {/* Breadcrumb and Header */}
       <BreadcrumbHeader title="Gym Registration - Report" />
+
+      {/* Workflow Status Display */}
+      {workflowStatus && (
+        <div style={{
+          background: workflowStatus.status === 'Approved' || workflowStatus.isApproved ? '#e8f5e8' : '#fff3e0',
+          border: `1px solid ${workflowStatus.status === 'Approved' || workflowStatus.isApproved ? '#4caf50' : '#ff9800'}`,
+          borderRadius: 8,
+          padding: '16px 20px',
+          marginBottom: 24,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12
+        }}>
+          <div style={{
+            width: 12,
+            height: 12,
+            borderRadius: '50%',
+            background: workflowStatus.status === 'Approved' || workflowStatus.isApproved ? '#4caf50' : '#ff9800'
+          }} />
+          <div>
+            <div style={{ fontWeight: 600, fontSize: 16, color: '#202224', marginBottom: 4 }}>
+              Workflow Status: {workflowStatus.status || (workflowStatus.isApproved ? 'Approved' : 'Pending')}
+            </div>
+            <div style={{ fontSize: 14, color: '#666' }}>
+              {workflowStatus.status === 'Approved' || workflowStatus.isApproved 
+                ? 'Your gym registration request has been approved.' 
+                : 'Your gym registration request is pending approval.'}
+            </div>
+          </div>
+        </div>
+      )}
+      {workflowLoading && (
+        <div style={{
+          background: '#f5f5f5',
+          border: '1px solid #ddd',
+          borderRadius: 8,
+          padding: '16px 20px',
+          marginBottom: 24,
+          textAlign: 'center',
+          color: '#666'
+        }}>
+          Loading workflow status...
+        </div>
+      )}
+      {workflowError && (
+        <div style={{
+          background: '#ffebee',
+          border: '1px solid #f44336',
+          borderRadius: 8,
+          padding: '16px 20px',
+          marginBottom: 24,
+          color: '#d32f2f'
+        }}>
+          Error loading workflow status: {workflowError}
+        </div>
+      )}
 
       {/* Employee Profile Section */}
       <EmployeeProfileSection employee={employee} />
