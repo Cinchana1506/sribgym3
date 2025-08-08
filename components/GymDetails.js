@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import FileUpload from './FileUpload';
 import { FormInput, FormSelect, ActivityScheduleGrid } from './ReusableComponents';
+import { useBatchTimings } from '../hooks';
 
-const GymDetails = ({ state, onActivityChange }) => {
+const GymDetails = ({ state, onActivityChange, gymtype = 1, gymid = 5, mempid = 133 }) => {
   const [activity, setActivity] = useState('Gym');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [attachedFile, setAttachedFile] = useState(null);
+
+  // Use the batch timings hook to get dynamic timeslots
+  const { data, loading, error, fetchBatchTimings } = useBatchTimings({
+    gymtype,
+    gymid,
+    mempid,
+    autoFetch: activity === 'Group Exercise', // Only fetch when Group Exercise is selected
+  });
 
   const handleChange = (e) => {
     setActivity(e.target.value);
@@ -24,12 +33,8 @@ const GymDetails = ({ state, onActivityChange }) => {
     setAttachedFile(null);
   };
 
-  const timeSlots = [
-    '8.00 AM to 9.00 AM',
-    '9.15 AM to 10.15 AM',
-    '4.00 PM to 5.00 PM',
-    '5.30 PM to 6.30 PM'
-  ];
+  // Extract timeslots from API data or use empty array if no data
+  const timeSlots = data?.data?.map(timing => timing.timingDesc) || [];
 
   const getStatement = () => {
     return activity === 'Group Exercise' 
@@ -84,57 +89,98 @@ const GymDetails = ({ state, onActivityChange }) => {
           <div style={{ fontWeight: 700, fontSize: 16, color: '#202224', marginBottom: 16, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>
             {state === 'deregistration' ? 'Time Slot' : 'Select Time Slots'}
           </div>
-          {state === 'deregistration' ? (
-            // Single dropdown for deregistration
-            <div style={{ display: 'flex', flexDirection: 'column', width: '40%' }}>
-              <FormSelect
-                value={selectedTimeSlot || ''}
-                onChange={(e) => setSelectedTimeSlot(e.target.value)}
-                options={['', ...timeSlots]}
-              />
+          
+          {/* Loading state */}
+          {loading && (
+            <div style={{ padding: '20px', textAlign: 'center', color: '#1976d2' }}>
+              Loading available time slots...
             </div>
-          ) : (
-            // Multiple buttons for registration
-            <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'center' }}>
-              {timeSlots.map((slot) => (
-                <button
-                  key={slot}
-                  style={{
-                    padding: '10px 24px',
-                    borderRadius: 7,
-                    border: selectedTimeSlot === slot ? '2.5px solid #1976d2' : '1.5px solid #bdbdbd',
-                    background: selectedTimeSlot === slot ? '#e3f0fd' : '#fff',
-                    color: selectedTimeSlot === slot ? '#1976d2' : '#202224',
-                    fontWeight: 500,
-                    fontSize: 15,
-                    minWidth: 170,
-                    boxShadow: '0 1px 2px #f0f0f0',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif"
-                  }}
-                  onClick={() => handleTimeSlotSelect(slot)}
-                >
-                  {slot}
-                </button>
-              ))}
-              {selectedTimeSlot && (
-                <button style={{
-                  padding: '10px 24px',
-                  borderRadius: 7,
-                  border: '1.5px solid #f44336',
-                  background: '#fff',
-                  color: '#f44336',
-                  fontWeight: 500,
-                  fontSize: 15,
+          )}
+          
+          {/* Error state */}
+          {error && (
+            <div style={{ padding: '10px', backgroundColor: '#f8d7da', color: '#721c24', borderRadius: '4px', marginBottom: '10px' }}>
+              Error loading time slots: {error}
+              <button
+                onClick={() => fetchBatchTimings()}
+                style={{
+                  marginLeft: '10px',
+                  padding: '4px 8px',
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif"
-                }}>
-                  Notify me!
-                </button>
-              )}
+                  fontSize: '12px'
+                }}
+              >
+                Retry
+              </button>
             </div>
+          )}
+          
+          {/* Time slots content - only show if not loading and no error */}
+          {!loading && !error && (
+            <>
+              {state === 'deregistration' ? (
+                // Single dropdown for deregistration
+                <div style={{ display: 'flex', flexDirection: 'column', width: '40%' }}>
+                  <FormSelect
+                    value={selectedTimeSlot || ''}
+                    onChange={(e) => setSelectedTimeSlot(e.target.value)}
+                    options={['', ...timeSlots]}
+                  />
+                </div>
+              ) : (
+                // Multiple buttons for registration
+                <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {timeSlots.length > 0 ? (
+                    timeSlots.map((slot) => (
+                      <button
+                        key={slot}
+                        style={{
+                          padding: '10px 24px',
+                          borderRadius: 7,
+                          border: selectedTimeSlot === slot ? '2.5px solid #1976d2' : '1.5px solid #bdbdbd',
+                          background: selectedTimeSlot === slot ? '#e3f0fd' : '#fff',
+                          color: selectedTimeSlot === slot ? '#1976d2' : '#202224',
+                          fontWeight: 500,
+                          fontSize: 15,
+                          minWidth: 170,
+                          boxShadow: '0 1px 2px #f0f0f0',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif"
+                        }}
+                        onClick={() => handleTimeSlotSelect(slot)}
+                      >
+                        {slot}
+                      </button>
+                    ))
+                  ) : (
+                    <div style={{ color: '#666', fontStyle: 'italic' }}>
+                      No time slots available. Please try again later.
+                    </div>
+                  )}
+                  {selectedTimeSlot && (
+                    <button style={{
+                      padding: '10px 24px',
+                      borderRadius: 7,
+                      border: '1.5px solid #f44336',
+                      background: '#fff',
+                      color: '#f44336',
+                      fontWeight: 500,
+                      fontSize: 15,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif"
+                    }}>
+                      Notify me!
+                    </button>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
