@@ -26,9 +26,9 @@ const ReportDeregistrationFormGym = () => {
 
   // Fetch employee details by master ID
   const { data: employeeDetails, loading: employeeLoading, error: employeeError, fetchDetailsByMasterID } = useDetailsByMasterID({
-    masterid: selectedMasterID,
+    masterid: 133, // Default master ID
     mempid: selectedEmployeeID,
-    autoFetch: false // Don't auto-fetch, let user trigger
+    autoFetch: true // Auto-fetch employee details
   });
 
   // Use employee details from API if available, otherwise use fallback

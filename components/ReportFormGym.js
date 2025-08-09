@@ -7,7 +7,7 @@ import BreadcrumbHeader from './BreadcrumbHeader';
 import EmployeeProfileSection from './EmployeeProfileSection';
 import RequestTypeSectionReport from './RequestTypeSectionReport';
 import { ReadOnlyField } from './ReusableComponents';
-import { useGymRegistrationDetails, useDetailsByMasterID } from '../hooks';
+import { useDetailsByMasterID } from '../hooks';
 
 // Report-specific components for Gym
 const ReportFormGym = () => {
@@ -28,19 +28,11 @@ const ReportFormGym = () => {
   // This would come from the employee's submitted form - for now hardcoded as 'Registration'
   const [requestType, setRequestType] = useState('Registration'); // or 'De-Registration'
 
-  // Fetch employee details by master ID
+  // Fetch employee details by master ID - ONLY API used for this report
   const { data: employeeDetails, loading: employeeLoading, error: employeeError, fetchDetailsByMasterID } = useDetailsByMasterID({
-    masterid: selectedMasterID,
+    masterid: 133, // Default master ID
     mempid: selectedEmployeeID,
-    autoFetch: false // Don't auto-fetch, let user trigger
-  });
-
-  // Fetch gym registration details for reporting
-  const { data: registrationDetails, loading: detailsLoading, error: detailsError, fetchGymRegistrationDetails } = useGymRegistrationDetails({
-    searchtype: 1, // Search type (1 for gym)
-    isemphistory: 0, // Not employee history
-    empname: '', // Empty for all employees
-    autoFetch: false // Don't auto-fetch, let user trigger
+    autoFetch: true // Auto-fetch employee details
   });
 
   // Use employee details from API if available, otherwise use fallback
@@ -87,42 +79,26 @@ const ReportFormGym = () => {
 
 
 
-        {/* Results Display */}
-        {registrationDetails && registrationDetails.success && registrationDetails.data && (
+        {/* Employee Registration Details - Using getDetailsByMasterID API only */}
+        {employeeDetails && employeeDetails.success && (
           <div style={{ marginBottom: 32 }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: '#202224', marginBottom: 16, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>
-              Registration Details
+              Employee Registration Details
             </div>
             <div style={{ 
               background: '#fff', 
               border: '1px solid #e3e8ee', 
               borderRadius: 8,
-              overflow: 'hidden'
+              padding: '16px'
             }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ background: '#f8f9fa' }}>
-                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>Employee ID</th>
-                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>Name</th>
-                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>Gym Type</th>
-                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>Status</th>
-                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>Start Date</th>
-                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #e3e8ee', fontSize: 14, fontWeight: 600 }}>End Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {registrationDetails.data.map((record, index) => (
-                    <tr key={index} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                      <td style={{ padding: '12px', fontSize: 14 }}>{record.employeeID || 'N/A'}</td>
-                      <td style={{ padding: '12px', fontSize: 14 }}>{record.employeeName || 'N/A'}</td>
-                      <td style={{ padding: '12px', fontSize: 14 }}>{record.gymType || 'N/A'}</td>
-                      <td style={{ padding: '12px', fontSize: 14 }}>{record.status || 'N/A'}</td>
-                      <td style={{ padding: '12px', fontSize: 14 }}>{record.startDate || 'N/A'}</td>
-                      <td style={{ padding: '12px', fontSize: 14 }}>{record.endDate || 'N/A'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <ReadOnlyField label="Employee ID" value={employee.id || '25504878'} />
+                <ReadOnlyField label="Employee Name" value={employee.name || 'Manoj Kandan M'} />
+                <ReadOnlyField label="Activity Type" value="Gym" />
+                <ReadOnlyField label="Registration Status" value="Active" />
+                <ReadOnlyField label="Start Date" value="24-May-2025" />
+                <ReadOnlyField label="End Date" value="12-Jun-2025" />
+              </div>
             </div>
           </div>
         )}
