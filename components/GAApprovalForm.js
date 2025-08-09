@@ -144,7 +144,7 @@ const GAApprovalForm = () => {
         <RequestTypeSectionGA requestType={requestType} onNoteClick={handleNoteClick} />
         
         {/* API Loading/Error Status (subtle) */}
-        {registrationLoading && (
+        {employeeLoading && (
           <div style={{ 
             padding: '8px 12px', 
             backgroundColor: '#e3f2fd', 
@@ -154,10 +154,10 @@ const GAApprovalForm = () => {
             fontSize: '14px',
             textAlign: 'center'
           }}>
-            Loading registration details...
+            Loading employee details...
           </div>
         )}
-        {registrationError && (
+        {employeeError && (
           <div style={{ 
             padding: '8px 12px', 
             backgroundColor: '#ffebee', 
@@ -167,7 +167,7 @@ const GAApprovalForm = () => {
             fontSize: '14px',
             textAlign: 'center'
           }}>
-            Error loading details: {registrationError}
+            Error loading details: {employeeError}
           </div>
         )}
         {/* Gym Details Section (read-only) */}
