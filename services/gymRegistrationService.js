@@ -276,18 +276,11 @@ export const updateGymRequestByEmployee = async (data) => {
  */
 export const updateGymDetailsByGA = async (data) => {
   try {
-    // Transform the data to match the existing UpdateGymRequestByGA API format
+    // Use the simple format that the API expects
     const requestData = {
-      mEmpID: data.mempid,
-      gymID: 1, // Default gym ID
-      regType: data.status === 'approved' ? 1 : 2, // 1 for approval, 2 for rejection
-      paymentOption: 1,
-      gymType: 1,
-      selectedGymTID: 1,
-      subscriptionStartDate: new Date().toISOString(),
-      subscriptionEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      resType: data.status === 'approved' ? 1 : 2,
-      fcFileIndexID: 1,
+      masterid: data.masterid,
+      mempid: data.mempid,
+      status: data.status,
       comments: data.comments || ''
     };
 
