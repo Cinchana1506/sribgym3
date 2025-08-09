@@ -266,7 +266,7 @@ export const updateGymRequestByEmployee = async (data) => {
 };
 
 /**
- * Update gym details by GA (General Affairs)
+ * Update gym details by GA (General Affairs) - Uses existing UpdateGymRequestByGA endpoint
  * @param {Object} data - Request body for GA update
  * @param {number} data.masterid - Master ID
  * @param {number} data.mempid - Member/Employee ID
@@ -276,7 +276,22 @@ export const updateGymRequestByEmployee = async (data) => {
  */
 export const updateGymDetailsByGA = async (data) => {
   try {
-    const response = await gymRegistrationClient.post('/api/GymRegistration/UpdateGymDetailsByGA', data);
+    // Transform the data to match the existing UpdateGymRequestByGA API format
+    const requestData = {
+      mEmpID: data.mempid,
+      gymID: 1, // Default gym ID
+      regType: data.status === 'approved' ? 1 : 2, // 1 for approval, 2 for rejection
+      paymentOption: 1,
+      gymType: 1,
+      selectedGymTID: 1,
+      subscriptionStartDate: new Date().toISOString(),
+      subscriptionEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      resType: data.status === 'approved' ? 1 : 2,
+      fcFileIndexID: 1,
+      comments: data.comments || ''
+    };
+
+    const response = await gymRegistrationClient.post('/api/GymRegistration/UpdateGymRequestByGA', requestData);
     
     return {
       success: true,
