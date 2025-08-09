@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CommentTextArea, ActionButton } from './ReusableComponents';
 import { useSubmitGymRequest, useUpdateGymRequestByEmployee } from '../hooks';
 
-const FormActionsSection = ({ formData, isUpdateMode = false, onUpdate, isAlreadyRegistered = false }) => {
+const FormActionsSection = ({ formData, isUpdateMode = false, onUpdate, isAlreadyRegistered = false, isDeregistration = false }) => {
   const [comment, setComment] = useState('');
   const { data, loading, error, submitRequest, clear } = useSubmitGymRequest();
   const { data: updateData, loading: updateLoading, error: updateError, updateRequest, clear: clearUpdate } = useUpdateGymRequestByEmployee();
@@ -25,8 +25,9 @@ const FormActionsSection = ({ formData, isUpdateMode = false, onUpdate, isAlread
 
     console.log('Submitting data:', requestData);
     
-    // Use correct API based on registration status
-    if (isAlreadyRegistered || isUpdateMode) {
+    // Use updateGymRequestByEmployee only if employee is already registered AND wants to deregister
+    // Otherwise, always use submitGymRequest
+    if (isAlreadyRegistered && isDeregistration) {
       await updateRequest(requestData);
     } else {
       await submitRequest(requestData);
