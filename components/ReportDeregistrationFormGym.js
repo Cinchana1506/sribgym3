@@ -3,10 +3,15 @@ import { MdAssignment } from 'react-icons/md';
 import BreadcrumbHeader from './BreadcrumbHeader';
 import EmployeeProfileSection from './EmployeeProfileSection';
 import RequestTypeSectionReport from './RequestTypeSectionReport';
+import { useDetailsByMasterID } from '../hooks';
 
 // Report components for Gym Deregistration
 const ReportDeregistrationFormGym = () => {
-  const [employee] = useState({
+  const [selectedMasterID, setSelectedMasterID] = useState(null);
+  const [selectedEmployeeID, setSelectedEmployeeID] = useState(25504878); // Default employee ID
+
+  // Fallback employee data
+  const [fallbackEmployee] = useState({
     id: '25504878',
     name: 'Manoj Kandan M',
     email: 'Manoj.kandan@partner.samsung.com',
@@ -18,6 +23,16 @@ const ReportDeregistrationFormGym = () => {
 
   // This would come from the employee's submitted form - for now hardcoded as 'De-Registration'
   const [requestType, setRequestType] = useState('De-Registration');
+
+  // Fetch employee details by master ID
+  const { data: employeeDetails, loading: employeeLoading, error: employeeError, fetchDetailsByMasterID } = useDetailsByMasterID({
+    masterid: selectedMasterID,
+    mempid: selectedEmployeeID,
+    autoFetch: false // Don't auto-fetch, let user trigger
+  });
+
+  // Use employee details from API if available, otherwise use fallback
+  const employee = employeeDetails?.success && employeeDetails?.data ? employeeDetails.data : fallbackEmployee;
 
   return (
     <div style={{

@@ -205,6 +205,7 @@ const EmployeeSubmissionForm = () => {
       <PaymentDetails 
         isOpen={showPaymentModal} 
         onClose={() => setShowPaymentModal(false)} 
+        employeeId={employeeId}
       />
 
       {/* Note Modal */}

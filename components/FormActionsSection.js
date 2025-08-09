@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CommentTextArea, ActionButton } from './ReusableComponents';
 import { useSubmitGymRequest, useUpdateGymRequestByEmployee } from '../hooks';
 
-const FormActionsSection = ({ formData, isUpdateMode = false, onUpdate }) => {
+const FormActionsSection = ({ formData, isUpdateMode = false, onUpdate, isAlreadyRegistered = false }) => {
   const [comment, setComment] = useState('');
   const { data, loading, error, submitRequest, clear } = useSubmitGymRequest();
   const { data: updateData, loading: updateLoading, error: updateError, updateRequest, clear: clearUpdate } = useUpdateGymRequestByEmployee();
@@ -25,8 +25,12 @@ const FormActionsSection = ({ formData, isUpdateMode = false, onUpdate }) => {
 
     console.log('Submitting data:', requestData);
     
-    // Call the API
-    await submitRequest(requestData);
+    // Use correct API based on registration status
+    if (isAlreadyRegistered || isUpdateMode) {
+      await updateRequest(requestData);
+    } else {
+      await submitRequest(requestData);
+    }
   };
 
   return (
@@ -74,21 +78,11 @@ const FormActionsSection = ({ formData, isUpdateMode = false, onUpdate }) => {
           onClick={isUpdateMode ? onUpdate : handleSubmit}
           disabled={loading || updateLoading}
         >
-          {loading || updateLoading ? 'Submitting...' : 'Submit'}
+          {loading || updateLoading ? 'Processing...' : 'Submit'}
         </ActionButton>
-      </div>
-
-      {/* Debug Info */}
-      <div style={{ marginTop: '20px', padding: '10px', background: '#f5f5f5', borderRadius: '4px', fontSize: '12px' }}>
-        <strong>Debug Info:</strong>
-        <div>Mode: {isUpdateMode ? 'Update' : 'Submit'}</div>
-        <div>Loading: {(loading || updateLoading) ? 'Yes' : 'No'}</div>
-        <div>Error: {(error || updateError) ? 'Yes' : 'No'}</div>
-        <div>Data: {(data || updateData) ? 'Received' : 'None'}</div>
-        {(error || updateError) && <div style={{ color: 'red' }}>Error details: {error || updateError}</div>}
       </div>
     </>
   );
 };
 
-export default FormActionsSection; 
+export default FormActionsSection;

@@ -14,7 +14,8 @@ import usePaymentStatus from '../hooks/usePaymentStatus';
 
 // Report-specific components for Group Exercise
 const ReportFormGroupExercise = () => {
-  const [employee] = useState({
+  // Fallback employee data
+  const [fallbackEmployee] = useState({
     id: '25504878',
     name: 'Manoj Kandan M',
     email: 'Manoj.kandan@partner.samsung.com',
@@ -32,7 +33,7 @@ const ReportFormGroupExercise = () => {
   const [paymentChecked, setPaymentChecked] = useState(false);
 
   // Get employee ID (default to 313 if not available from login)
-  const employeeId = employee.id || '313';
+  const employeeId = fallbackEmployee.id || '313';
 
   // Fetch batch timings for group exercise (gymtype=1, gymid=2, mempid=313)
   const { data: batchTimings, loading: timingsLoading, error: timingsError } = useBatchTimings({
@@ -54,6 +55,9 @@ const ReportFormGroupExercise = () => {
     mempid: parseInt(employeeId),
     autoFetch: false // We'll fetch manually when we have master ID
   });
+
+  // Use employee details from API if available, otherwise use fallback
+  const employee = registrationDetails?.success && registrationDetails?.data ? registrationDetails.data : fallbackEmployee;
 
   // Effect to determine registration status and set appropriate form mode
   useEffect(() => {

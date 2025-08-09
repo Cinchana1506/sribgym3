@@ -7,11 +7,15 @@ import BreadcrumbHeader from './BreadcrumbHeader';
 import EmployeeProfileSection from './EmployeeProfileSection';
 import RequestTypeSectionReport from './RequestTypeSectionReport';
 import { ReadOnlyField } from './ReusableComponents';
-import { useGymRegistrationDetails } from '../hooks';
+import { useGymRegistrationDetails, useDetailsByMasterID } from '../hooks';
 
 // Report-specific components for Gym
 const ReportFormGym = () => {
-  const [employee] = useState({
+  const [selectedMasterID, setSelectedMasterID] = useState(null);
+  const [selectedEmployeeID, setSelectedEmployeeID] = useState(25504878); // Default employee ID
+
+  // Fallback employee data
+  const [fallbackEmployee] = useState({
     id: '25504878',
     name: 'Manoj Kandan M',
     email: 'Manoj.kandan@partner.samsung.com',
@@ -24,6 +28,13 @@ const ReportFormGym = () => {
   // This would come from the employee's submitted form - for now hardcoded as 'Registration'
   const [requestType, setRequestType] = useState('Registration'); // or 'De-Registration'
 
+  // Fetch employee details by master ID
+  const { data: employeeDetails, loading: employeeLoading, error: employeeError, fetchDetailsByMasterID } = useDetailsByMasterID({
+    masterid: selectedMasterID,
+    mempid: selectedEmployeeID,
+    autoFetch: false // Don't auto-fetch, let user trigger
+  });
+
   // Fetch gym registration details for reporting
   const { data: registrationDetails, loading: detailsLoading, error: detailsError, fetchGymRegistrationDetails } = useGymRegistrationDetails({
     searchtype: 1, // Search type (1 for gym)
@@ -31,6 +42,9 @@ const ReportFormGym = () => {
     empname: '', // Empty for all employees
     autoFetch: false // Don't auto-fetch, let user trigger
   });
+
+  // Use employee details from API if available, otherwise use fallback
+  const employee = employeeDetails?.success && employeeDetails?.data ? employeeDetails.data : fallbackEmployee;
 
   return (
     <div style={{
