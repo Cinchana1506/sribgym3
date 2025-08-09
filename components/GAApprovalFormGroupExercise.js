@@ -66,7 +66,10 @@ const GAApprovalFormGroupExercise = () => {
   const handleApprove = async () => {
     // Prepare request data for approval
     const requestData = {
-      mEmpID: mempid, // Employee ID from registration
+      masterid: masterid,
+      mempid: parseInt(mempid),
+      status: 'approved',
+      comments: comment
     };
 
     try {

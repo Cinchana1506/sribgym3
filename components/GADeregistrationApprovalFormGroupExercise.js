@@ -6,7 +6,7 @@ import { MdAssignment } from 'react-icons/md';
 import { RiStickyNoteFill } from 'react-icons/ri';
 import BreadcrumbHeader from './BreadcrumbHeader';
 import EmployeeProfileSection from './EmployeeProfileSection';
-import { useDetailsByMasterID, useUpdateGymRequestByGA } from '../hooks';
+import { useDetailsByMasterID, useUpdateGymDetailsByGA } from '../hooks';
 import RequestTypeSectionGA from './RequestTypeSectionGA';
 import NoteModal from './NoteModal';
 
@@ -39,14 +39,47 @@ const GADeregistrationApprovalFormGroupExercise = () => {
   const [requestType, setRequestType] = useState('De-Registration');
   const [showNoteModal, setShowNoteModal] = useState(false);
 
-  const handleApprove = () => {
-    console.log('Group Exercise deregistration request approved with comment:', comment);
-    // Add approval logic here
+  // GA Update API hook
+  const { data: updateData, loading: updateLoading, error: updateError, updateGymDetails, clear } = useUpdateGymDetailsByGA();
+
+  const handleApprove = async () => {
+    // Prepare request data for approval
+    const requestData = {
+      masterid: masterid,
+      mempid: parseInt(mempid),
+      status: 'approved',
+      comments: comment
+    };
+
+    try {
+      const result = await updateGymDetails(requestData);
+      if (result && result.success) {
+        console.log('Approval successful:', result);
+        // Handle success (e.g., show success message, redirect, etc.)
+      }
+    } catch (error) {
+      console.error('Approval failed:', error);
+    }
   };
 
-  const handleReject = () => {
-    console.log('Group Exercise deregistration request rejected with comment:', comment);
-    // Add rejection logic here
+  const handleReject = async () => {
+    // Prepare request data for rejection
+    const requestData = {
+      masterid: masterid,
+      mempid: parseInt(mempid),
+      status: 'rejected',
+      comments: comment
+    };
+
+    try {
+      const result = await updateGymDetails(requestData);
+      if (result && result.success) {
+        console.log('Rejection successful:', result);
+        // Handle success (e.g., show success message, redirect, etc.)
+      }
+    } catch (error) {
+      console.error('Rejection failed:', error);
+    }
   };
 
   const handleNoteClick = () => {
