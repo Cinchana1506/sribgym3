@@ -6,11 +6,24 @@ import { MdAssignment } from 'react-icons/md';
 import { RiStickyNoteFill } from 'react-icons/ri';
 import BreadcrumbHeader from './BreadcrumbHeader';
 import EmployeeProfileSection from './EmployeeProfileSection';
+import { useDetailsByMasterID, useUpdateGymRequestByGA } from '../hooks';
 import RequestTypeSectionGA from './RequestTypeSectionGA';
 import NoteModal from './NoteModal';
 
 // GA-specific components for Group Exercise Deregistration
 const GADeregistrationApprovalFormGroupExercise = () => {
+  // Example: GA would receive masterid and mempid from the workflow system
+  const [masterid, setMasterid] = useState(133);
+  const [mempid, setMempid] = useState(25504878);
+
+  // Fetch employee details using getDetailsByMasterID API
+  const { data: employeeData, loading: employeeLoading, error: employeeError, fetchDetailsByMasterID } = useDetailsByMasterID({
+    masterid,
+    mempid,
+    autoFetch: true
+  });
+
+  // Fallback employee data (keep header default as requested)
   const [employee] = useState({
     id: '25504878',
     name: 'Manoj Kandan M',

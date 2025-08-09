@@ -19,20 +19,14 @@ const GAApprovalForm = () => {
   const [masterid, setMasterid] = useState(133);
   const [mempid, setMempid] = useState(133);
 
-  // Fetch registration details using the API
-  const { data: registrationData, loading: registrationLoading, error: registrationError } = useDetailsByMasterID({
+  // Fetch employee details using getDetailsByMasterID API
+  const { data: employeeData, loading: employeeLoading, error: employeeError, fetchDetailsByMasterID } = useDetailsByMasterID({
     masterid,
     mempid,
     autoFetch: true
   });
 
-  // Fetch employee profile data using the mempid from registration
-  const { data: employeeData, loading: employeeLoading, error: employeeError } = useEmployeeRegistrationDetails({
-    mempid: mempid,
-    autoFetch: true
-  });
-
-  // Fallback employee data if API fails
+  // Fallback employee data (keep header default as requested)
   const fallbackEmployee = {
     id: '25504878',
     name: 'Manoj Kandan M',
@@ -43,8 +37,8 @@ const GAApprovalForm = () => {
     avatarUrl: '/samsungimage.png'
   };
 
-  // Use API data if available, otherwise fallback
-  const employee = employeeData?.success && employeeData?.data ? employeeData.data : fallbackEmployee;
+  // Always use fallback for header as requested, but API data available for other uses
+  const employee = fallbackEmployee;
 
   const [comment, setComment] = useState('');
   // This would come from the employee's submitted form - for now hardcoded as 'Registration'

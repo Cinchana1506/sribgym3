@@ -10,10 +10,22 @@ import EmployeeProfileSection from './EmployeeProfileSection';
 import RequestTypeSectionGA from './RequestTypeSectionGA';
 import NoteModal from './NoteModal';
 import { ReadOnlyField, CommentTextArea, ActionButton } from './ReusableComponents';
-import { useUpdateGymRequestByGA } from '../hooks';
+import { useDetailsByMasterID, useUpdateGymRequestByGA } from '../hooks';
 
 // GA-specific components for Group Exercise
 const GAApprovalFormGroupExercise = () => {
+  // Example: GA would receive masterid and mempid from the workflow system
+  const [masterid, setMasterid] = useState(133);
+  const [mempid, setMempid] = useState(25504878);
+
+  // Fetch employee details using getDetailsByMasterID API
+  const { data: employeeData, loading: employeeLoading, error: employeeError, fetchDetailsByMasterID } = useDetailsByMasterID({
+    masterid,
+    mempid,
+    autoFetch: true
+  });
+
+  // Fallback employee data (keep header default as requested)
   const [employee] = useState({
     id: '25504878',
     name: 'Manoj Kandan M',
@@ -50,9 +62,6 @@ const GAApprovalFormGroupExercise = () => {
 
   // GA Update API hook
   const { data: updateData, loading: updateLoading, error: updateError, updateRequest, clear } = useUpdateGymRequestByGA();
-
-  // Example: GA would receive masterid and mempid from the workflow system
-  const mempid = 25504878; // Employee ID
 
   const handleApprove = async () => {
     // Prepare request data for approval

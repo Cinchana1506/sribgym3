@@ -171,7 +171,7 @@ const ReportFormGym = () => {
               fontSize: '14px',
               textAlign: 'center'
             }}>
-              ✅ Found {registrationDetails.data?.length || 0} registration records
+              Found {registrationDetails.data?.length || 0} registration records
             </div>
           )}
         </div>

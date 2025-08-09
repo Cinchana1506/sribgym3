@@ -83,114 +83,116 @@ const GymDetails = ({ state, onActivityChange, gymtype = 1, gymid = 5, mempid = 
         </div>
       )}
 
-      {/* Select Time Slots Section - Show for both Gym and Group Exercise */}
-      <div style={{ marginTop: 32 }}>
-        <div style={{ fontWeight: 700, fontSize: 16, color: '#202224', marginBottom: 16, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>
-          {state === 'deregistration' ? 'Time Slot' : 'Select Time Slots'}
-        </div>
-        
-        {/* Loading state */}
-        {loading && (
-          <div style={{ padding: '20px', textAlign: 'center', color: '#1976d2' }}>
-            Loading available time slots...
+      {/* Select Time Slots Section - Only show for Group Exercise */}
+      {activity === 'Group Exercise' && (
+        <div style={{ marginTop: 32 }}>
+          <div style={{ fontWeight: 700, fontSize: 16, color: '#202224', marginBottom: 16, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>
+            {state === 'deregistration' ? 'Time Slot' : 'Select Time Slots'}
           </div>
-        )}
-        
-        {/* Error state */}
-        {error && (
-          <div style={{ padding: '10px', backgroundColor: '#f8d7da', color: '#721c24', borderRadius: '4px', marginBottom: '10px' }}>
-            Error loading time slots: {error}
-            <button
-              onClick={() => fetchBatchTimings()}
-              style={{
-                marginLeft: '10px',
-                padding: '4px 8px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '12px'
-              }}
-            >
-              Retry
-            </button>
-          </div>
-        )}
-        
-        {/* Time slots content - only show if not loading and no error */}
-        {!loading && !error && (
-          <>
-            {state === 'deregistration' ? (
-              // Single dropdown for deregistration
-              <div style={{ display: 'flex', flexDirection: 'column', width: '40%' }}>
-                <FormSelect
-                  value={selectedTimeSlot || ''}
-                  onChange={(e) => setSelectedTimeSlot(e.target.value)}
-                  options={['', ...timeSlots]}
-                />
-              </div>
-            ) : (
-              // Multiple buttons for registration
-              <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'center' }}>
-                {timeSlots.length > 0 ? (
-                  data?.data?.map((timing) => (
-                    <button
-                      key={timing.timingDesc}
-                      style={{
-                        padding: '10px 24px',
-                        borderRadius: 7,
-                        border: selectedTimeSlot === timing.timingDesc ? '2.5px solid #1976d2' : '1.5px solid #bdbdbd',
-                        background: selectedTimeSlot === timing.timingDesc ? '#e3f0fd' : '#fff',
-                        color: selectedTimeSlot === timing.timingDesc ? '#1976d2' : '#202224',
-                        fontWeight: 500,
-                        fontSize: 15,
-                        minWidth: 170,
-                        boxShadow: '0 1px 2px #f0f0f0',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif"
-                      }}
-                      onClick={() => handleTimeSlotSelect(timing.timingDesc)}
-                    >
-                      {timing.timingDesc}
-                    </button>
-                  ))
-                ) : (
-                  <div style={{ color: '#666', fontStyle: 'italic' }}>
-                    No time slots available. Please try again later.
-                  </div>
-                )}
-                {selectedTimeSlot && (
-                  // Find the selected timing data to check maxuser
-                  (() => {
-                    const selectedTiming = data?.data?.find(timing => timing.timingDesc === selectedTimeSlot);
-                    const maxUser = selectedTiming?.maxuser || 0;
-                    const shouldShowNotifyMe = maxUser > 90;
-                    
-                    return shouldShowNotifyMe ? (
-                      <button style={{
-                        padding: '10px 24px',
-                        borderRadius: 7,
-                        border: '1.5px solid #f44336',
-                        background: '#fff',
-                        color: '#f44336',
-                        fontWeight: 500,
-                        fontSize: 15,
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif"
-                      }}>
-                        Notify me!
+          
+          {/* Loading state */}
+          {loading && (
+            <div style={{ padding: '20px', textAlign: 'center', color: '#1976d2' }}>
+              Loading available time slots...
+            </div>
+          )}
+          
+          {/* Error state */}
+          {error && (
+            <div style={{ padding: '10px', backgroundColor: '#f8d7da', color: '#721c24', borderRadius: '4px', marginBottom: '10px' }}>
+              Error loading time slots: {error}
+              <button
+                onClick={() => fetchBatchTimings()}
+                style={{
+                  marginLeft: '10px',
+                  padding: '4px 8px',
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
+              >
+                Retry
+              </button>
+            </div>
+          )}
+          
+          {/* Time slots content - only show if not loading and no error */}
+          {!loading && !error && (
+            <>
+              {state === 'deregistration' ? (
+                // Single dropdown for deregistration
+                <div style={{ display: 'flex', flexDirection: 'column', width: '40%' }}>
+                  <FormSelect
+                    value={selectedTimeSlot || ''}
+                    onChange={(e) => setSelectedTimeSlot(e.target.value)}
+                    options={['', ...timeSlots]}
+                  />
+                </div>
+              ) : (
+                // Multiple buttons for registration
+                <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {timeSlots.length > 0 ? (
+                    data?.data?.map((timing) => (
+                      <button
+                        key={timing.timingDesc}
+                        style={{
+                          padding: '10px 24px',
+                          borderRadius: 7,
+                          border: selectedTimeSlot === timing.timingDesc ? '2.5px solid #1976d2' : '1.5px solid #bdbdbd',
+                          background: selectedTimeSlot === timing.timingDesc ? '#e3f0fd' : '#fff',
+                          color: selectedTimeSlot === timing.timingDesc ? '#1976d2' : '#202224',
+                          fontWeight: 500,
+                          fontSize: 15,
+                          minWidth: 170,
+                          boxShadow: '0 1px 2px #f0f0f0',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif"
+                        }}
+                        onClick={() => handleTimeSlotSelect(timing.timingDesc)}
+                      >
+                        {timing.timingDesc}
                       </button>
-                    ) : null;
-                  })()
-                )}
-              </div>
-            )}
-          </>
-        )}
-      </div>
+                    ))
+                  ) : (
+                    <div style={{ color: '#666', fontStyle: 'italic' }}>
+                      No time slots available. Please try again later.
+                    </div>
+                  )}
+                  {selectedTimeSlot && (
+                    // Find the selected timing data to check maxuser
+                    (() => {
+                      const selectedTiming = data?.data?.find(timing => timing.timingDesc === selectedTimeSlot);
+                      const maxUser = selectedTiming?.maxuser || 0;
+                      const shouldShowNotifyMe = maxUser > 90;
+                      
+                      return shouldShowNotifyMe ? (
+                        <button style={{
+                          padding: '10px 24px',
+                          borderRadius: 7,
+                          border: '1.5px solid #f44336',
+                          background: '#fff',
+                          color: '#f44336',
+                          fontWeight: 500,
+                          fontSize: 15,
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif"
+                        }}>
+                          Notify me!
+                        </button>
+                      ) : null;
+                    })()
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       {/* File Upload Section - Show for both Gym and Group Exercise, but not for deregistration */}
       {state !== 'deregistration' && (
