@@ -9,7 +9,7 @@ import EmployeeProfileSection from './EmployeeProfileSection';
 import RequestTypeSectionGA from './RequestTypeSectionGA';
 import NoteModal from './NoteModal';
 import { CommentTextArea, ActionButton, ReadOnlyField, SectionHeader, FileDisplay } from './ReusableComponents';
-import { useDetailsByMasterID, useEmployeeRegistrationDetails, useUpdateGymRequestByGA } from '../hooks';
+import { useDetailsByMasterID, useUpdateGymDetailsByGA } from '../hooks';
 
 
 // GA-specific components
@@ -46,50 +46,45 @@ const GAApprovalForm = () => {
   const [showNoteModal, setShowNoteModal] = useState(false);
 
   // GA Update API hook
-  const { data: updateData, loading: updateLoading, error: updateError, updateRequest, clear } = useUpdateGymRequestByGA();
+  const { data: updateData, loading: updateLoading, error: updateError, updateGymDetails, clear } = useUpdateGymDetailsByGA();
 
   const handleApprove = async () => {
     // Prepare request data for approval
     const requestData = {
       mEmpID: mempid, // Employee ID from registration
-      gymID: 1, // Gym ID (should come from registration data)
-      regType: 1, // Registration Type (1 for approval)
-      paymentOption: 1, // Payment Option
-      gymType: 1, // Gym Type
-      selectedGymTID: 1, // Selected Gym Timing ID (should come from registration data)
-      subscriptionStartDate: new Date().toISOString(), // Start Date (should come from registration data)
-      subscriptionEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // End Date
-      resType: 1, // Response Type (1 for approval)
-      fcFileIndexID: 1 // File Index ID (should come from registration data)
     };
 
-    console.log('Approving request with data:', requestData);
-    console.log('Comment:', comment);
-    
-    // Call the API
-    await updateRequest(requestData);
+    try {
+      const result = await updateGymDetails(requestData);
+      if (result && result.success) {
+        console.log('Approval successful:', result);
+        // Handle success (e.g., show success message, redirect, etc.)
+      }
+    } catch (error) {
+      console.error('Approval failed:', error);
+    }
   };
 
   const handleReject = async () => {
     // Prepare request data for rejection
     const requestData = {
-      mEmpID: mempid, // Employee ID from registration
-      gymID: 1, // Gym ID (should come from registration data)
-      regType: 2, // Registration Type (2 for rejection)
-      paymentOption: 1, // Payment Option
-      gymType: 1, // Gym Type
-      selectedGymTID: 1, // Selected Gym Timing ID (should come from registration data)
-      subscriptionStartDate: new Date().toISOString(), // Start Date (should come from registration data)
-      subscriptionEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // End Date
-      resType: 2, // Response Type (2 for rejection)
-      fcFileIndexID: 1 // File Index ID (should come from registration data)
+      masterid: masterid,
+      mempid: parseInt(mempid),
+      status: 'rejected',
+      comments: comment
     };
 
+    try {
+      const result = await updateGymDetails(requestData);
+      if (result && result.success) {
+        console.log('Rejection successful:', result);
+        // Handle success (e.g., show success message, redirect, etc.)
+      }
+    } catch (error) {
+      console.error('Rejection failed:', error);
+    }
     console.log('Rejecting request with data:', requestData);
     console.log('Comment:', comment);
-    
-    // Call the API
-    await updateRequest(requestData);
   };
 
   const handleNoteClick = () => {

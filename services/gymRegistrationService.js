@@ -266,6 +266,34 @@ export const updateGymRequestByEmployee = async (data) => {
 };
 
 /**
+ * Update gym details by GA (General Affairs)
+ * @param {Object} data - Request body for GA update
+ * @param {number} data.masterid - Master ID
+ * @param {number} data.mempid - Member/Employee ID
+ * @param {string} data.status - Approval status ('approved' or 'rejected')
+ * @param {string} data.comments - GA comments
+ * @returns {Promise<Object>} - Update result data
+ */
+export const updateGymDetailsByGA = async (data) => {
+  try {
+    const response = await gymRegistrationClient.post('/api/GymRegistration/UpdateGymDetailsByGA', data);
+    
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.error('Error updating gym details by GA:', error);
+    
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Failed to update gym details by GA',
+      status: error.response?.status,
+    };
+  }
+};
+
+/**
  * Get gym registration details
  * @param {Object} params - Query parameters
  * @param {number} params.searchtype - Search type (integer)
@@ -308,5 +336,6 @@ export default {
   submitGymRequest,
   updateGymRequestByGA,
   updateGymRequestByEmployee,
+  updateGymDetailsByGA,
   getGymRegistrationDetails,
 }; 

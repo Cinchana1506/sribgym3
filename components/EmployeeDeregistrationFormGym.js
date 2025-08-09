@@ -7,7 +7,7 @@ import Declarations from './Declarations';
 import FormActionsSection from './FormActionsSection';
 import PaymentDetails from './PaymentDetails';
 import NoteModal from './NoteModal';
-import { useEmployeeRegistrationDetails, useUpdateGymRequestByEmployee } from '../hooks';
+import { useDetailsByMasterID, useUpdateGymRequestByEmployee } from '../hooks';
 
 const EmployeeDeregistrationFormGym = () => {
   const [activity, setActivity] = useState('Gym');
@@ -16,11 +16,13 @@ const EmployeeDeregistrationFormGym = () => {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [formData, setFormData] = useState({});
 
-  // Employee ID - in real app this would come from authentication
+  // Employee ID and Master ID - in real app this would come from authentication/workflow
   const employeeId = 25504878;
+  const [masterid, setMasterid] = useState(133);
 
-  // Fetch employee profile data using the API
-  const { data: employeeData, loading: employeeLoading, error: employeeError } = useEmployeeRegistrationDetails({
+  // Fetch employee details using getDetailsByMasterID API
+  const { data: employeeData, loading: employeeLoading, error: employeeError, fetchDetailsByMasterID } = useDetailsByMasterID({
+    masterid,
     mempid: employeeId,
     autoFetch: true
   });

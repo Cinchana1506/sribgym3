@@ -8,7 +8,6 @@ import EmployeeProfileSection from './EmployeeProfileSection';
 import RequestTypeSectionReport from './RequestTypeSectionReport';
 import { ReadOnlyField } from './ReusableComponents';
 import useBatchTimings from '../hooks/useBatchTimings';
-import useGymWorkflowStatus from '../hooks/useGymWorkflowStatus';
 import useDetailsByMasterID from '../hooks/useDetailsByMasterID';
 import usePaymentStatus from '../hooks/usePaymentStatus';
 
@@ -28,14 +27,14 @@ const ReportFormGroupExercise = () => {
   // State for request type - will be determined based on registration status
   const [requestType, setRequestType] = useState('Registration'); // or 'De-Registration'
   const [hasExistingRegistration, setHasExistingRegistration] = useState(false);
-  const [masterID, setMasterID] = useState(null);
+  const [masterID, setMasterID] = useState(133); // Default master ID
   const [showPayment, setShowPayment] = useState(false);
   const [paymentChecked, setPaymentChecked] = useState(false);
 
-  // Get employee ID (default to 313 if not available from login)
-  const employeeId = fallbackEmployee.id || '313';
+  // Get employee ID (default to 25504878 if not available from login)
+  const employeeId = fallbackEmployee.id || '25504878';
 
-  // Fetch batch timings for group exercise (gymtype=1, gymid=2, mempid=313)
+  // Fetch batch timings for group exercise (gymtype=1, gymid=2, mempid=25504878)
   const { data: batchTimings, loading: timingsLoading, error: timingsError } = useBatchTimings({
     gymtype: 1,
     gymid: 2,
@@ -43,17 +42,11 @@ const ReportFormGroupExercise = () => {
     autoFetch: true
   });
 
-  // Fetch workflow status for the employee
-  const { data: workflowStatus, loading: workflowLoading, error: workflowError } = useGymWorkflowStatus({
-    mempid: parseInt(employeeId),
-    autoFetch: true
-  });
-
-  // Fetch details by master ID if we have a master ID
+  // Fetch details by master ID
   const { data: registrationDetails, loading: detailsLoading, error: detailsError, fetchDetailsByMasterID } = useDetailsByMasterID({
     masterid: masterID,
     mempid: parseInt(employeeId),
-    autoFetch: false // We'll fetch manually when we have master ID
+    autoFetch: true // Auto-fetch employee details
   });
 
   // Use employee details from API if available, otherwise use fallback
@@ -61,28 +54,12 @@ const ReportFormGroupExercise = () => {
 
   // Effect to determine registration status and set appropriate form mode
   useEffect(() => {
-    if (workflowStatus && workflowStatus.masterID) {
-      setMasterID(workflowStatus.masterID);
-      // If employee has a master ID, they have registered
-      setHasExistingRegistration(true);
-      // Default to deregistration if they have existing registration
-      setRequestType('De-Registration');
-    } else if (registrationDetails) {
+    if (registrationDetails && registrationDetails.success) {
       // Check if registration details indicate existing registration
-      const isRegistered = registrationDetails.gymwfs !== undefined && registrationDetails.gymwfs !== null;
-      setHasExistingRegistration(isRegistered);
-      if (isRegistered) {
-        setRequestType('De-Registration');
-      }
+      setHasExistingRegistration(true);
+      setRequestType('De-Registration');
     }
-  }, [workflowStatus, registrationDetails]);
-
-  // Fetch registration details when master ID is available
-  useEffect(() => {
-    if (masterID && parseInt(employeeId)) {
-      fetchDetailsByMasterID({ masterid: masterID, mempid: parseInt(employeeId) });
-    }
-  }, [masterID, employeeId, fetchDetailsByMasterID]);
+  }, [registrationDetails]);
 
   // Function to toggle between registration and deregistration
   const toggleRequestType = () => {
@@ -171,11 +148,11 @@ const ReportFormGroupExercise = () => {
       {/* Breadcrumb and Header */}
       <BreadcrumbHeader title="Gym Registration - Report" />
 
-      {/* Workflow Status Display */}
-      {workflowStatus && (
+      {/* Workflow Status Display - Using registration details */}
+      {registrationDetails && registrationDetails.success && (
         <div style={{
-          background: workflowStatus.status === 'Approved' || workflowStatus.isApproved ? '#e8f5e8' : '#fff3e0',
-          border: `1px solid ${workflowStatus.status === 'Approved' || workflowStatus.isApproved ? '#4caf50' : '#ff9800'}`,
+          background: '#e8f5e8',
+          border: '1px solid #4caf50',
           borderRadius: 8,
           padding: '16px 20px',
           marginBottom: 24,
@@ -187,21 +164,19 @@ const ReportFormGroupExercise = () => {
             width: 12,
             height: 12,
             borderRadius: '50%',
-            background: workflowStatus.status === 'Approved' || workflowStatus.isApproved ? '#4caf50' : '#ff9800'
+            background: '#4caf50'
           }} />
           <div>
             <div style={{ fontWeight: 600, fontSize: 16, color: '#202224', marginBottom: 4 }}>
-              Workflow Status: {workflowStatus.status || (workflowStatus.isApproved ? 'Approved' : 'Pending')}
+              Workflow Status: Registered
             </div>
             <div style={{ fontSize: 14, color: '#666' }}>
-              {workflowStatus.status === 'Approved' || workflowStatus.isApproved 
-                ? 'Your gym registration request has been approved.' 
-                : 'Your gym registration request is pending approval.'}
+              Employee registration details found.
             </div>
           </div>
         </div>
       )}
-      {workflowLoading && (
+      {detailsLoading && (
         <div style={{
           background: '#f5f5f5',
           border: '1px solid #ddd',
@@ -211,10 +186,10 @@ const ReportFormGroupExercise = () => {
           textAlign: 'center',
           color: '#666'
         }}>
-          Loading workflow status...
+          Loading employee details...
         </div>
       )}
-      {workflowError && (
+      {detailsError && (
         <div style={{
           background: '#ffebee',
           border: '1px solid #f44336',
@@ -223,7 +198,7 @@ const ReportFormGroupExercise = () => {
           marginBottom: 24,
           color: '#d32f2f'
         }}>
-          Error loading workflow status: {workflowError}
+          Error loading employee details: {detailsError}
         </div>
       )}
 

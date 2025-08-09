@@ -7,37 +7,42 @@ import Declarations from './Declarations';
 import FormActionsSection from './FormActionsSection';
 import PaymentDetails from './PaymentDetails';
 import NoteModal from './NoteModal';
+import { useDetailsByMasterID, useUpdateGymRequestByEmployee } from '../hooks';
 
 const EmployeeDeregistrationFormGroupExercise = () => {
   const [activity, setActivity] = useState('Group Exercise');
-  const [employee, setEmployee] = useState(null);
   const [attachedFile, setAttachedFile] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showNoteModal, setShowNoteModal] = useState(false);
+  const [formData, setFormData] = useState({});
 
-  useEffect(() => {
-    // Fetch employee data
-    const fetchEmployeeData = async () => {
-      try {
-        const response = await fetch('https://api.example.com/employee/25504878');
-        const data = await response.json();
-        setEmployee(data);
-      } catch (error) {
-        console.log('Using mock data');
-        setEmployee({
-          id: '25504878',
-          name: 'Manoj Kandan M',
-          email: 'Manoj.kandan@partner.samsung.com',
-          designation: 'Outsourcing',
-          division: 'Tech Strategy Team\\Smart Infra Group\\Information System & AI Tools',
-          manager: 'Ravindra S R (06876669)',
-          avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg'
-        });
-      }
-    };
+  // Employee ID and Master ID - in real app this would come from authentication/workflow
+  const employeeId = 25504878;
+  const [masterid, setMasterid] = useState(133);
 
-    fetchEmployeeData();
-  }, []);
+  // Fetch employee details using getDetailsByMasterID API
+  const { data: employeeData, loading: employeeLoading, error: employeeError, fetchDetailsByMasterID } = useDetailsByMasterID({
+    masterid,
+    mempid: employeeId,
+    autoFetch: true
+  });
+
+  // Fallback employee data if API fails
+  const fallbackEmployee = {
+    id: '25504878',
+    name: 'Manoj Kandan M',
+    email: 'Manoj.kandan@partner.samsung.com',
+    designation: 'Outsourcing',
+    division: 'Tech Strategy Team\\Smart Infra Group\\Information System & AI Tools',
+    manager: 'Ravindra S R (06876669)',
+    avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg'
+  };
+
+  // Use API data if available, otherwise fallback
+  const employee = employeeData?.success && employeeData?.data ? employeeData.data : fallbackEmployee;
+
+  // Employee Update API hook for deregistration
+  const { data: updateData, loading: updateLoading, error: updateError, updateRequest, clear } = useUpdateGymRequestByEmployee();
 
   const handlePaymentClick = () => {
     setShowPaymentModal(true);
