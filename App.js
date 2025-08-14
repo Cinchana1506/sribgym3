@@ -1,4 +1,5 @@
 import React from 'react';
+import './styles/app.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import NavigationBar from './components/NavigationBar';
 import EmployeeSubmissionForm from './components/EmployeeSubmissionForm';

@@ -1,35 +1,38 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdAssignment } from 'react-icons/md';
-import { BsCreditCard } from 'react-icons/bs';
+// removed BsCreditCard icon in favor of provided imageicon too 
 import { RiStickyNoteFill } from 'react-icons/ri';
 
 const RequestTypeSection = ({ onPaymentClick, onNoteClick, defaultRequestType = 'Registration', currentActivity = 'Gym' }) => {
   const navigate = useNavigate();
-  const requiredInfoIcon = <MdAssignment size={28} color="#4caf50" style={{ marginRight: 10, verticalAlign: 'middle' }} />;
+  const requiredInfoIcon = (
+    <img
+      src="/Clip path group.png"
+      width={28}
+      height={28}
+      alt="Required information"
+      className="section-icon"
+    />
+  );
 
   return (
     <>
       {/* Required Information Section Header - No Background */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="mb-24">
+        <div className="flex items-center gap-12">
           {requiredInfoIcon}
           <span style={{ fontWeight: 700, fontSize: 20, color: '#1a1a1a', letterSpacing: 0.1 }}>Required Information</span>
         </div>
       </div>
 
       {/* Request Type + Payment/Note Buttons Container */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: 32
-      }}>
+      <div className="flex justify-between items-start mb-32">
         {/* Left: Request Type */}
         <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 600, marginBottom: 16, fontSize: 16, color: '#1a1a1a' }}>Request Type</div>
-          <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
-            <label style={{ display: 'flex', alignItems: 'center', fontSize: 15, fontWeight: 500, color: '#1a1a1a' }}>
+          <div className="fw-600 mb-16 fs-16 color-1a1a1a">Request Type</div>
+          <div className="flex items-center gap-32">
+            <label className="flex items-center fs-15 fw-600 color-1a1a1a">
               <input 
                 type="radio" 
                 name="requestType" 
@@ -42,7 +45,7 @@ const RequestTypeSection = ({ onPaymentClick, onNoteClick, defaultRequestType = 
                 style={{ marginRight: 8 }} 
               /> Registration
             </label>
-            <label style={{ display: 'flex', alignItems: 'center', fontSize: 15, fontWeight: 500, color: '#1a1a1a' }}>
+            <label className="flex items-center fs-15 fw-600 color-1a1a1a">
               <input 
                 type="radio" 
                 name="requestType" 
@@ -63,51 +66,25 @@ const RequestTypeSection = ({ onPaymentClick, onNoteClick, defaultRequestType = 
         </div>
 
         {/* Right: Payment and Note Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+        <div className="flex items-center gap-24">
           {/* Payment button - Only show for Registration */}
           {defaultRequestType === 'Registration' && (
             <button 
               onClick={onPaymentClick}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#8B5CF6',
-                fontWeight: 600,
-                fontSize: 15,
-                padding: '8px 16px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 4,
-                cursor: 'pointer',
-                borderRadius: 6,
-                transition: 'background-color 0.2s'
-              }}
+              className="btn-ghost-purple"
+              aria-label="Payment"
+              title="Payment"
             >
-              <BsCreditCard size={18} />
-              <span>Payment</span>
+              <img src="/payment.png" className="payment-icon" alt="Payment" />
             </button>
           )}
           <button 
             onClick={onNoteClick}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#8B5CF6',
-              fontWeight: 600,
-              fontSize: 15,
-              padding: '8px 16px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 4,
-              cursor: 'pointer',
-              borderRadius: 6,
-              transition: 'background-color 0.2s'
-            }}
+            className="btn-ghost-purple"
+            aria-label="Note"
+            title="Note"
           >
-            <RiStickyNoteFill size={18} />
-            <span>Note</span>
+            <img src="/Notet.png" className="note-icon" alt="Note" />
           </button>
         </div>
       </div>

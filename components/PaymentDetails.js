@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, ChevronDown, FileText, CreditCard } from 'lucide-react';
+import { X, Calendar, ChevronDown } from 'lucide-react';
 import { FormInput, FormSelect, Modal } from './ReusableComponents';
 import usePaymentStatus from '../hooks/usePaymentStatus';
 
@@ -172,22 +172,26 @@ const PaymentDetails = ({ isOpen, onClose, employeeId }) => {
               fontWeight: 600,
               padding: '8px 0'
             }}>
-              <FileText size={16} color="#f44336" />
+              <img src="/pdf.png" alt="PDF" style={{ width: 18, height: 18 }} />
               Bank Details & Guidelines
             </button>
-            <button style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              backgroundColor: 'transparent',
-              border: 'none',
-              color: '#000000',
-              cursor: 'pointer',
-              fontSize: 15,
-              fontWeight: 600,
-              padding: '8px 0'
-            }}>
-              <CreditCard size={16} color="#8B5CF6" />
+            <button 
+              aria-label="Payment History" 
+              title="Payment History"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                backgroundColor: 'transparent',
+                border: 'none',
+                color: '#000000',
+                cursor: 'pointer',
+                fontSize: 15,
+                fontWeight: 600,
+                padding: '8px 0'
+              }}
+            >
+              <img src="/PAY.png" alt="Payment History" style={{ width: 18, height: 18 }} />
               Payment History
             </button>
           </div>

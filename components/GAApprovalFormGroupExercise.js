@@ -139,7 +139,7 @@ const GAApprovalFormGroupExercise = () => {
       {/* Required Information Section Header - Outside Grey Background */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <MdAssignment size={28} color="#4caf50" style={{ marginRight: 10, verticalAlign: 'middle' }} />
+          <img src="/Clip path group.png" width="28" height="28" alt="Required information" style={{ marginRight: 10, verticalAlign: 'middle' }} />
           <span style={{ fontWeight: 700, fontSize: 20, color: '#1a1a1a', letterSpacing: 0.1 }}>Required Information</span>
         </div>
       </div>
@@ -170,14 +170,14 @@ const GAApprovalFormGroupExercise = () => {
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <ReadOnlyField
-                label="Apply Start Date"
+                label="Start Date"
                 value="24-May-2025"
                 required={true}
               />
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <ReadOnlyField
-                label="Apply End Date"
+                label="End Date"
                 value="12-Jun-2025"
                 required={true}
               />

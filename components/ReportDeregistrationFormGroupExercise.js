@@ -4,6 +4,7 @@ import BreadcrumbHeader from './BreadcrumbHeader';
 import EmployeeProfileSection from './EmployeeProfileSection';
 import RequestTypeSectionReport from './RequestTypeSectionReport';
 import { useDetailsByMasterID } from '../hooks';
+// styles consolidated globally in App
 
 // Report components for Group Exercise Deregistration
 const ReportDeregistrationFormGroupExercise = () => {
@@ -35,19 +36,7 @@ const ReportDeregistrationFormGroupExercise = () => {
   const employee = employeeDetails?.success && employeeDetails?.data ? employeeDetails.data : fallbackEmployee;
 
   return (
-    <div style={{
-      background: '#fff',
-      borderRadius: 0,
-      boxShadow: 'none',
-      padding: '0 24px',
-      margin: 0,
-      width: '100vw',
-      maxWidth: '100vw',
-      minWidth: 0,
-      position: 'relative',
-      overflowX: 'visible',
-      boxSizing: 'border-box',
-    }}>
+    <div className="report-container">
       {/* Breadcrumb and Header */}
       <BreadcrumbHeader title="Gym Registration - Report" />
 
@@ -55,85 +44,40 @@ const ReportDeregistrationFormGroupExercise = () => {
       <EmployeeProfileSection employee={employee} />
 
       {/* Required Information Section Header - Outside Grey Background */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <MdAssignment size={28} color="#4caf50" style={{ marginRight: 10, verticalAlign: 'middle' }} />
-          <span style={{ fontWeight: 700, fontSize: 20, color: '#1a1a1a', letterSpacing: 0.1 }}>Required Information</span>
+      <div className="section-spacing">
+        <div className="section-title-row">
+          <img src="/Clip path group.png" width="28" height="28" alt="Required information" className="section-icon" />
+          <span className="section-title">Required Information</span>
         </div>
       </div>
 
       {/* Extended Grey Background Container - Request Type to Employee Self Declaration */}
-      <div style={{
-        background: '#fafbfb',
-        borderRadius: 12,
-        padding: '32px',
-        marginBottom: 32,
-        boxShadow: '0 1px 4px #f3f3f3'
-      }}>
+      <div className="report-card">
         {/* Request Type Section Only */}
         <RequestTypeSectionReport requestType={requestType} />
 
         {/* Group Exercise Details Section (read-only) */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 2, whiteSpace: 'nowrap' }}>
-            <span style={{ fontWeight: 700, fontSize: 16, color: '#202224', fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>Gym Details</span>
-            <span style={{ color: '#98A2B3', fontWeight: 400, fontSize: 15, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>&nbsp;• Maximum Users will be 30 & Minimum of 5 users in each slot per batch for Group Exercises.</span>
+        <div className="section-block">
+          <div className="row-center-nowrap">
+            <span className="label-title">Gym Details</span>
+            <span className="label-subtitle">&nbsp;• Maximum Users will be 30 & Minimum of 5 users in each slot per batch for Group Exercises.</span>
           </div>
-          <div style={{ display: 'flex', gap: 32, alignItems: 'flex-end', marginBottom: 0, marginTop: 16 }}>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <label style={{ fontSize: 13, color: '#202224', fontWeight: 700, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif", marginBottom: 4 }}>Gym Activity</label>
-              <div style={{
-                padding: '12px 16px',
-                borderRadius: 5,
-                border: '1px solid #E5E7EB',
-                fontSize: 14,
-                width: '100%',
-                height: '44px',
-                color: '#202224',
-                fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif",
-                background: '#f8f9fa',
-                boxSizing: 'border-box',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
+          <div className="details-row">
+            <div className="field">
+              <label className="field-label-13">Gym Activity</label>
+              <div className="value-box">
                 Group Exercise
               </div>
             </div>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <label style={{ fontSize: 14, color: '#202224', fontWeight: 700, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif", marginBottom: 4 }}>Apply Start Date <span style={{ color: '#f44336' }}>*</span></label>
-              <div style={{
-                padding: '12px 16px',
-                borderRadius: 5,
-                border: '1px solid #E5E7EB',
-                fontSize: 14,
-                width: '100%',
-                height: '44px',
-                color: '#202224',
-                fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif",
-                background: '#f8f9fa',
-                boxSizing: 'border-box',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
+            <div className="field">
+              <label className="field-label-14">Start Date <span className="asterisk">*</span></label>
+              <div className="value-box">
                 24-May-2025
               </div>
             </div>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <label style={{ fontSize: 14, color: '#202224', fontWeight: 700, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif", marginBottom: 4 }}>Apply End Date <span style={{ color: '#f44336' }}>*</span></label>
-              <div style={{
-                padding: '12px 16px',
-                borderRadius: 5,
-                border: '1px solid #E5E7EB',
-                fontSize: 14,
-                width: '100%',
-                height: '44px',
-                color: '#202224',
-                fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif",
-                background: '#f8f9fa',
-                boxSizing: 'border-box',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
+            <div className="field">
+              <label className="field-label-14">End Date <span className="asterisk">*</span></label>
+              <div className="value-box">
                 12-Jun-2025
               </div>
             </div>
@@ -141,41 +85,28 @@ const ReportDeregistrationFormGroupExercise = () => {
         </div>
 
         {/* Time Slot Section (read-only) */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#202224', marginBottom: 16, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>Time Slot</div>
-          <div style={{
-            padding: '12px 16px',
-            borderRadius: 5,
-            border: '1px solid #E5E7EB',
-            fontSize: 14,
-            width: '40%',
-            height: '44px',
-            color: '#202224',
-            fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif",
-            background: '#f8f9fa',
-            boxSizing: 'border-box',
-            display: 'flex',
-            alignItems: 'center'
-          }}>
+        <div className="section-block">
+          <div className="declaration-title">Time Slot</div>
+          <div className="value-box time-slot-box">
             8:00 AM To 9:00 AM
           </div>
         </div>
 
         {/* Employee Self Declaration Section (read-only) */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#202224', marginBottom: 16, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>Employee Self Declaration</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <label style={{ display: 'flex', alignItems: 'flex-start', fontSize: 14, color: '#202224', cursor: 'default' }}>
-              <input type="checkbox" checked disabled style={{ marginRight: 12, marginTop: 2 }} />
+        <div className="section-block">
+          <div className="declaration-title">Employee Self Declaration</div>
+          <div className="declaration-group">
+            <label className="declaration-label">
+              <input type="checkbox" checked disabled className="declaration-checkbox" />
               <span>I here by declare to take full responsibility of any incidents caused during workout sessions.</span>
             </label>
-            <label style={{ display: 'flex', alignItems: 'flex-start', fontSize: 14, color: '#202224', cursor: 'default' }}>
-              <input type="checkbox" checked disabled style={{ marginRight: 12, marginTop: 2 }} />
-              <span>I here by declare, that i have read the <a href="#" style={{ color: '#1976d2', textDecoration: 'none' }}>Do's and Dont's</a> on using the SRI-B Gymnasium.</span>
+            <label className="declaration-label">
+              <input type="checkbox" checked disabled className="declaration-checkbox" />
+              <span>I here by declare, that i have read the <a href="#" className="declaration-link">Do's and Dont's</a> on using the SRI-B Gymnasium.</span>
             </label>
-            <label style={{ display: 'flex', alignItems: 'flex-start', fontSize: 14, color: '#202224', cursor: 'default' }}>
-              <input type="checkbox" checked disabled style={{ marginRight: 12, marginTop: 2 }} />
-              <span>I here by declare, that i have read the <a href="#" style={{ color: '#1976d2', textDecoration: 'none' }}>OS Employees payment guidelines</a>.</span>
+            <label className="declaration-label">
+              <input type="checkbox" checked disabled className="declaration-checkbox" />
+              <span>I here by declare, that i have read the <a href="#" className="declaration-link">OS Employees payment guidelines</a>.</span>
             </label>
           </div>
         </div>

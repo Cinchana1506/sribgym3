@@ -65,9 +65,10 @@ const RequestTypeSectionGA = ({ requestType, onNoteClick }) => {
               borderRadius: 6,
               transition: 'background-color 0.2s'
             }}
+            aria-label="Note"
+            title="Note"
           >
-            <RiStickyNoteFill size={18} />
-            <span>Note</span>
+            <img src="/Notet.png" className="note-icon" alt="Note" />
           </button>
         </div>
       </div>

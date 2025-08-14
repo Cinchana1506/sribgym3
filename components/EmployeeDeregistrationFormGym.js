@@ -74,29 +74,15 @@ const EmployeeDeregistrationFormGym = () => {
   };
 
   return (
-    <div style={{
-      background: '#fff',
-      borderRadius: 0,
-      boxShadow: 'none',
-      padding: '0 24px',
-      margin: 0,
-      width: '100vw',
-      maxWidth: '100vw',
-      minWidth: 0,
-      position: 'relative',
-      overflowX: 'visible',
-      boxSizing: 'border-box',
-    }}>
+    <div className="report-container">
       {/* Breadcrumb and Header */}
       <BreadcrumbHeader title="Gym Registration - Employee Initiation" />
 
       {/* Employee Profile Section */}
       {employeeLoading ? (
-        <div style={{ padding: '20px', textAlign: 'center', color: '#1976d2' }}>
-          Loading employee information...
-        </div>
+        <div className="info-text-centered">Loading employee information...</div>
       ) : employeeError ? (
-        <div style={{ padding: '20px', textAlign: 'center', color: '#f44336' }}>
+        <div className="error-text-centered">
           <div>Error loading employee data. Using default information.</div>
           <div style={{ fontSize: '12px', marginTop: '8px' }}>
             Error: {employeeError}
@@ -110,20 +96,14 @@ const EmployeeDeregistrationFormGym = () => {
       <RequestTypeSection onPaymentClick={handlePaymentClick} onNoteClick={handleNoteClick} defaultRequestType="De-Registration" currentActivity={activity} />
 
       {/* Main Form Container - Everything from Request Type to Submit Button */}
-      <div style={{
-        background: '#fafbfb',
-        borderRadius: 12,
-        padding: '32px',
-        marginBottom: 32,
-        boxShadow: '0 1px 4px #f3f3f3'
-      }}>
+      <div className="report-card">
         {/* Form Fields: Gym Details */}
-        <div style={{ marginBottom: 32 }}>
+        <div className="section-block">
           <GymDetails state="deregistration" onActivityChange={setActivity} />
         </div>
 
         {/* Declarations */}
-        <div style={{ marginBottom: 32 }}>
+        <div className="section-block">
           <Declarations state="deregistration" />
         </div>
 

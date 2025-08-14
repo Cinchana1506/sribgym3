@@ -152,7 +152,7 @@ const GADeregistrationApprovalFormGroupExercise = () => {
               </div>
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <label style={{ fontSize: 14, color: '#202224', fontWeight: 700, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif", marginBottom: 4 }}>Apply Start Date <span style={{ color: '#f44336' }}>*</span></label>
+              <label style={{ fontSize: 14, color: '#202224', fontWeight: 700, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif", marginBottom: 4 }}>Start Date <span style={{ color: '#f44336' }}>*</span></label>
               <div style={{
                 padding: '12px 16px',
                 borderRadius: 5,
@@ -171,7 +171,7 @@ const GADeregistrationApprovalFormGroupExercise = () => {
               </div>
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <label style={{ fontSize: 14, color: '#202224', fontWeight: 700, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif", marginBottom: 4 }}>Apply End Date <span style={{ color: '#f44336' }}>*</span></label>
+              <label style={{ fontSize: 14, color: '#202224', fontWeight: 700, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif", marginBottom: 4 }}>End Date <span style={{ color: '#f44336' }}>*</span></label>
               <div style={{
                 padding: '12px 16px',
                 borderRadius: 5,

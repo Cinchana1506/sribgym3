@@ -2,7 +2,7 @@ import React from 'react';
 import { MdAssignment } from 'react-icons/md';
 
 const SectionHeader = ({ 
-  icon = <MdAssignment size={28} color="#4caf50" style={{ marginRight: 10, verticalAlign: 'middle' }} />,
+  icon = <img src="/Clip path group.png" width="28" height="28" alt="Required information" style={{ marginRight: 10, verticalAlign: 'middle' }} />,
   title = "Required Information",
   subtitle,
   style = {}

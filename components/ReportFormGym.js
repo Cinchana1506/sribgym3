@@ -8,6 +8,7 @@ import EmployeeProfileSection from './EmployeeProfileSection';
 import RequestTypeSectionReport from './RequestTypeSectionReport';
 import { ReadOnlyField } from './ReusableComponents';
 import { useDetailsByMasterID } from '../hooks';
+// styles consolidated globally in App
 
 // Report-specific components for Gym
 const ReportFormGym = () => {
@@ -39,19 +40,7 @@ const ReportFormGym = () => {
   const employee = employeeDetails?.success && employeeDetails?.data ? employeeDetails.data : fallbackEmployee;
 
   return (
-    <div style={{
-      background: '#fff',
-      borderRadius: 0,
-      boxShadow: 'none',
-      padding: '0 24px',
-      margin: 0,
-      width: '100vw',
-      maxWidth: '100vw',
-      minWidth: 0,
-      position: 'relative',
-      overflowX: 'visible',
-      boxSizing: 'border-box',
-    }}>
+    <div className="report-container">
       {/* Breadcrumb and Header */}
       <BreadcrumbHeader title="Gym Registration - Report" />
 
@@ -59,21 +48,15 @@ const ReportFormGym = () => {
       <EmployeeProfileSection employee={employee} />
 
       {/* Required Information Section Header - Outside Grey Background */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <MdAssignment size={28} color="#4caf50" style={{ marginRight: 10, verticalAlign: 'middle' }} />
-          <span style={{ fontWeight: 700, fontSize: 20, color: '#1a1a1a', letterSpacing: 0.1 }}>Required Information</span>
+      <div className="section-spacing">
+        <div className="section-title-row">
+          <img src="/Clip path group.png" width="28" height="28" alt="Required information" className="section-icon" />
+          <span className="section-title">Required Information</span>
         </div>
       </div>
 
       {/* Extended Grey Background Container - Request Type to Employee Self Declaration */}
-      <div style={{
-        background: '#fafbfb',
-        borderRadius: 12,
-        padding: '32px',
-        marginBottom: 32,
-        boxShadow: '0 1px 4px #f3f3f3'
-      }}>
+      <div className="report-card">
         {/* Request Type Section Only */}
         <RequestTypeSectionReport requestType={requestType} />
 
@@ -81,17 +64,12 @@ const ReportFormGym = () => {
 
         {/* Employee Registration Details - Using getDetailsByMasterID API only */}
         {employeeDetails && employeeDetails.success && (
-          <div style={{ marginBottom: 32 }}>
-            <div style={{ fontWeight: 700, fontSize: 16, color: '#202224', marginBottom: 16, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>
+          <div className="section-block">
+            <div className="declaration-title">
               Employee Registration Details
             </div>
-            <div style={{ 
-              background: '#fff', 
-              border: '1px solid #e3e8ee', 
-              borderRadius: 8,
-              padding: '16px'
-            }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div className="white-card">
+              <div className="grid-2">
                 <ReadOnlyField label="Employee ID" value={employee.id || '25504878'} />
                 <ReadOnlyField label="Employee Name" value={employee.name || 'Manoj Kandan M'} />
                 <ReadOnlyField label="Activity Type" value="Gym" />
@@ -104,12 +82,12 @@ const ReportFormGym = () => {
         )}
 
         {/* Gym Details Section (read-only) */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 2, whiteSpace: 'nowrap' }}>
-            <span style={{ fontWeight: 700, fontSize: 16, color: '#202224', fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>Gym Details</span>
-            <span style={{ color: '#98A2B3', fontWeight: 400, fontSize: 15, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>&nbsp;• Maximum User will be 70 per batch for Gym</span>
+        <div className="section-block">
+          <div className="row-center-nowrap">
+            <span className="label-title">Gym Details</span>
+            <span className="label-subtitle">&nbsp;• Maximum User will be 70 per batch for Gym</span>
           </div>
-          <div style={{ display: 'flex', gap: 32, alignItems: 'flex-end', marginBottom: 0, marginTop: 16 }}>
+          <div className="details-row">
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <ReadOnlyField
                 label="Gym Activity"
@@ -118,14 +96,14 @@ const ReportFormGym = () => {
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <ReadOnlyField
-                label="Apply Start Date"
+                label="Start Date"
                 value="24-May-2025"
                 required={true}
               />
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <ReadOnlyField
-                label="Apply End Date"
+                label="End Date"
                 value="12-Jun-2025"
                 required={true}
               />
@@ -134,46 +112,34 @@ const ReportFormGym = () => {
         </div>
 
         {/* Fitness Certificate Section (read-only) */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 14, color: '#202224', fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>Fitness Certificate</div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            background: '#fff',
-            border: '1.5px solid #e3e8ee',
-            borderRadius: 8,
-            padding: '12px 16px',
-            fontSize: 15,
-            minWidth: 220,
-            maxWidth: 340,
-            boxShadow: '0 1px 2px #f0f0f0',
-            gap: 8,
-          }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ marginRight: 8, flexShrink: 0 }}>
+        <div className="section-block">
+          <div className="declaration-title">Fitness Certificate</div>
+          <div className="fitness-file-card">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="file-icon">
               <rect width="24" height="24" rx="4" fill="#F44336"/>
               <text x="50%" y="60%" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="bold" fontFamily="Arial">PDF</text>
             </svg>
-            <span style={{ fontWeight: 500, marginRight: 8 }}>Fitness Certificate.pdf</span>
-            <span style={{ color: '#888', fontSize: 12, marginRight: 8 }}>11 Sep, 2023 • 12:24pm • 13MB</span>
-            <BsDownload size={50} color="#f44336" style={{ cursor: 'pointer', strokeWidth: 0.5 }} />
+            <span className="file-name">Fitness Certificate.pdf</span>
+            <span className="file-meta">11 Sep, 2023 • 12:24pm • 13MB</span>
+            <span className="download-icon"><BsDownload size={50} color="#f44336" /></span>
           </div>
         </div>
 
         {/* Employee Self Declaration Section (read-only) */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ fontWeight: 700, fontSize: 16, color: '#202224', marginBottom: 16, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>Employee Self Declaration</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <label style={{ display: 'flex', alignItems: 'flex-start', fontSize: 14, color: '#202224', cursor: 'default' }}>
-              <input type="checkbox" checked disabled style={{ marginRight: 12, marginTop: 2 }} />
+        <div className="section-block">
+          <div className="declaration-title">Employee Self Declaration</div>
+          <div className="declaration-group">
+            <label className="declaration-label">
+              <input type="checkbox" checked disabled className="declaration-checkbox" />
               <span>I here by declare to take full responsibility of any incidents caused during workout sessions.</span>
             </label>
-            <label style={{ display: 'flex', alignItems: 'flex-start', fontSize: 14, color: '#202224', cursor: 'default' }}>
-              <input type="checkbox" checked disabled style={{ marginRight: 12, marginTop: 2 }} />
-              <span>I here by declare, that i have read the <a href="#" style={{ color: '#1976d2', textDecoration: 'none' }}>Do's and Dont's</a> on using the SRI-B Gymnasium.</span>
+            <label className="declaration-label">
+              <input type="checkbox" checked disabled className="declaration-checkbox" />
+              <span>I here by declare, that i have read the <a href="#" className="declaration-link">Do's and Dont's</a> on using the SRI-B Gymnasium.</span>
             </label>
-            <label style={{ display: 'flex', alignItems: 'flex-start', fontSize: 14, color: '#202224', cursor: 'default' }}>
-              <input type="checkbox" checked disabled style={{ marginRight: 12, marginTop: 2 }} />
-              <span>I here by declare, that i have read the <a href="#" style={{ color: '#1976d2', textDecoration: 'none' }}>OS Employees payment guidelines</a>.</span>
+            <label className="declaration-label">
+              <input type="checkbox" checked disabled className="declaration-checkbox" />
+              <span>I here by declare, that i have read the <a href="#" className="declaration-link">OS Employees payment guidelines</a>.</span>
             </label>
           </div>
         </div>

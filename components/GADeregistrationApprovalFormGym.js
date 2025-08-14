@@ -110,7 +110,7 @@ const GADeregistrationApprovalFormGym = () => {
       {/* Required Information Section Header - Outside Grey Background */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <MdAssignment size={28} color="#4caf50" style={{ marginRight: 10, verticalAlign: 'middle' }} />
+          <img src="/Clip path group.png" width="28" height="28" alt="Required information" style={{ marginRight: 10, verticalAlign: 'middle' }} />
           <span style={{ fontWeight: 700, fontSize: 20, color: '#1a1a1a', letterSpacing: 0.1 }}>Required Information</span>
         </div>
       </div>
@@ -153,7 +153,7 @@ const GADeregistrationApprovalFormGym = () => {
               </div>
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <label style={{ fontSize: 14, color: '#202224', fontWeight: 700, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif", marginBottom: 4 }}>Apply Start Date <span style={{ color: '#f44336' }}>*</span></label>
+              <label style={{ fontSize: 14, color: '#202224', fontWeight: 700, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif", marginBottom: 4 }}>Start Date <span style={{ color: '#f44336' }}>*</span></label>
               <div style={{
                 padding: '12px 16px',
                 borderRadius: 5,
@@ -172,7 +172,7 @@ const GADeregistrationApprovalFormGym = () => {
               </div>
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <label style={{ fontSize: 14, color: '#202224', fontWeight: 700, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif", marginBottom: 4 }}>Apply End Date <span style={{ color: '#f44336' }}>*</span></label>
+              <label style={{ fontSize: 14, color: '#202224', fontWeight: 700, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif", marginBottom: 4 }}>End Date <span style={{ color: '#f44336' }}>*</span></label>
               <div style={{
                 padding: '12px 16px',
                 borderRadius: 5,

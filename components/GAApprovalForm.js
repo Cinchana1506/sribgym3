@@ -95,33 +95,17 @@ const GAApprovalForm = () => {
   };
 
   return (
-    <div style={{
-      background: '#fff',
-      borderRadius: 0,
-      boxShadow: 'none',
-      padding: '0 24px',
-      margin: 0,
-      width: '100vw',
-      maxWidth: '100vw',
-      minWidth: 0,
-      position: 'relative',
-      overflowX: 'visible',
-      boxSizing: 'border-box',
-    }}>
+    <div className="report-container">
       {/* Breadcrumb and Header */}
       <BreadcrumbHeader title="Gym Registration - GA Approval" />
 
       {/* Employee Profile Section */}
       {employeeLoading ? (
-        <div style={{ padding: '20px', textAlign: 'center', color: '#1976d2' }}>
-          Loading employee information...
-        </div>
+        <div className="info-text-centered">Loading employee information...</div>
       ) : employeeError ? (
-        <div style={{ padding: '20px', textAlign: 'center', color: '#f44336' }}>
+        <div className="error-text-centered">
           <div>Error loading employee data. Using default information.</div>
-          <div style={{ fontSize: '12px', marginTop: '8px' }}>
-            Error: {employeeError}
-          </div>
+          <div className="fs-12 mt-8">Error: {employeeError}</div>
         </div>
       ) : (
         <EmployeeProfileSection employee={employee} />
@@ -131,50 +115,20 @@ const GAApprovalForm = () => {
       <SectionHeader />
 
       {/* Extended Grey Background Container - Request Type to Action Buttons */}
-      <div style={{
-        background: '#fafbfb',
-        borderRadius: 12,
-        padding: '32px',
-        marginBottom: 32,
-        boxShadow: '0 1px 4px #f3f3f3'
-      }}>
+      <div className="report-card">
         {/* Request Type Section Only */}
         <RequestTypeSectionGA requestType={requestType} onNoteClick={handleNoteClick} />
         
         {/* API Loading/Error Status (subtle) */}
-        {employeeLoading && (
-          <div style={{ 
-            padding: '8px 12px', 
-            backgroundColor: '#e3f2fd', 
-            color: '#1976d2', 
-            borderRadius: '4px', 
-            marginBottom: '16px',
-            fontSize: '14px',
-            textAlign: 'center'
-          }}>
-            Loading employee details...
-          </div>
-        )}
-        {employeeError && (
-          <div style={{ 
-            padding: '8px 12px', 
-            backgroundColor: '#ffebee', 
-            color: '#c62828', 
-            borderRadius: '4px', 
-            marginBottom: '16px',
-            fontSize: '14px',
-            textAlign: 'center'
-          }}>
-            Error loading details: {employeeError}
-          </div>
-        )}
+        {employeeLoading && (<div className="alert info">Loading employee details...</div>)}
+        {employeeError && (<div className="alert error">Error loading details: {employeeError}</div>)}
         {/* Gym Details Section (read-only) */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 2, whiteSpace: 'nowrap' }}>
+        <div className="section-block">
+          <div className="flex-row items-center gap-8 mb-2 nowrap">
             <span style={{ fontWeight: 700, fontSize: 16, color: '#202224', fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>Gym Details</span>
             <span style={{ color: '#98A2B3', fontWeight: 400, fontSize: 15, fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>&nbsp;• Maximum User will be 70 per batch for Gym</span>
           </div>
-          <div style={{ display: 'flex', gap: 32, alignItems: 'flex-end', marginBottom: 0, marginTop: 16 }}>
+          <div className="details-row">
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <ReadOnlyField
                 label="Gym Activity"
@@ -183,14 +137,14 @@ const GAApprovalForm = () => {
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <ReadOnlyField
-                label="Apply Start Date"
+                label="Start Date"
                 value="24-May-2025"
                 required={true}
               />
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <ReadOnlyField
-                label="Apply End Date"
+                label="End Date"
                 value="12-Jun-2025"
                 required={true}
               />
@@ -199,8 +153,8 @@ const GAApprovalForm = () => {
         </div>
 
         {/* Fitness Certificate Section (read-only) */}
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 14, color: '#202224', fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>Fitness Certificate</div>
+        <div className="section-block">
+          <div className="declaration-title">Fitness Certificate</div>
           <FileDisplay 
             fileName="Fitness Certificate.pdf"
             fileSize="13MB"
@@ -221,50 +175,14 @@ const GAApprovalForm = () => {
         </div>
 
         {/* GA Update API Status Messages */}
-        {updateLoading && (
-          <div style={{ 
-            padding: '12px', 
-            backgroundColor: '#e3f2fd', 
-            color: '#1976d2', 
-            borderRadius: '4px', 
-            marginBottom: '16px',
-            fontSize: '14px',
-            textAlign: 'center'
-          }}>
-            Processing your decision...
-          </div>
-        )}
+        {updateLoading && (<div className="alert info">Processing your decision...</div>)}
         
-        {updateError && (
-          <div style={{ 
-            padding: '12px', 
-            backgroundColor: '#ffebee', 
-            color: '#c62828', 
-            borderRadius: '4px', 
-            marginBottom: '16px',
-            fontSize: '14px',
-            textAlign: 'center'
-          }}>
-            Error: {updateError}
-          </div>
-        )}
+        {updateError && (<div className="alert error">Error: {updateError}</div>)}
         
-        {updateData && (
-          <div style={{ 
-            padding: '12px', 
-            backgroundColor: '#e8f5e8', 
-            color: '#2e7d32', 
-            borderRadius: '4px', 
-            marginBottom: '16px',
-            fontSize: '14px',
-            textAlign: 'center'
-          }}>
-            ✅ Decision processed successfully!
-          </div>
-        )}
+        {updateData && (<div className="alert success">✅ Decision processed successfully!</div>)}
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 16 }}>
+        <div className="flex justify-end gap-16">
           {updateData && (
             <ActionButton 
               variant="secondary"
@@ -293,26 +211,11 @@ const GAApprovalForm = () => {
       </div>
 
       {/* Transfer Workflow Section */}
-      <div style={{ 
-        background: '#eff6ff', 
-        borderRadius: 12, 
-        padding: '5px', 
-        marginBottom: 32,
-        border: '1px solid #e9ecef'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="transfer-banner">
+        <div className="transfer-row">
           <BiRefresh size={24} color="#1976d2" />
           <span style={{ fontWeight: 700, fontSize: 16, color: '#202224', fontFamily: "'Samsung InterFace', 'Inter', Arial, sans-serif" }}>Transfer Workflow</span>
-          <button style={{ 
-            background: 'none', 
-            border: 'none', 
-            cursor: 'pointer', 
-            padding: 4, 
-            marginLeft: 'auto',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
+          <button className="btn-icon-plain">
             <BsChevronRight size={20} color="#000000" />
           </button>
         </div>

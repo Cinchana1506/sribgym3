@@ -59,7 +59,7 @@ const GymDetails = ({ state, onActivityChange, gymtype = 1, gymid = 5, mempid = 
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <FormInput
-            label="Apply Start Date"
+            label="Start Date"
             type="date"
             defaultValue="2025-05-24"
             required={true}
@@ -67,7 +67,7 @@ const GymDetails = ({ state, onActivityChange, gymtype = 1, gymid = 5, mempid = 
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <FormInput
-            label="Apply End Date"
+            label="End Date"
             type="date"
             defaultValue="2025-06-12"
             required={true}
